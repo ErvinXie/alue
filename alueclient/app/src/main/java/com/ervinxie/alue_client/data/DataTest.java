@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.util.AboutPictures;
@@ -35,24 +36,12 @@ public class DataTest extends AppCompatActivity {
         load = findViewById(R.id.data_test_load_image);
 
 
-        class DownloadAgent implements Downloader.AfterDownload {
-            ImageView imageView;
-
-            public DownloadAgent(ImageView v) {
-                imageView = v;
-
-            }
-
-            @Override
-            public void onFinished(Bitmap bitmap) {
-                imageView.setImageBitmap(bitmap);
-
-            }
-        }
-
         get.setOnClickListener(v -> {
             String Url = url.getText().toString();
-            new Downloader(new DownloadAgent(imageView1), Url);
+            GlideApp
+                    .with(Contract.context)
+                    .load(Url)
+                    .into(imageView1);
         });
 
 
@@ -82,22 +71,24 @@ public class DataTest extends AppCompatActivity {
 
             @Override
             public String getDir() {
-                return Contract.context.getFilesDir()+"/test.png";
+                return Contract.context.getFilesDir() + "/test.png";
             }
         }
 
-        class ReadAgent implements DiskReader.DiskReadInterface{
+        class ReadAgent implements DiskReader.DiskReadInterface {
 
             ImageView imageView;
             TextView info;
-            ReadAgent(ImageView imageView1,TextView textView){
+
+            ReadAgent(ImageView imageView1, TextView textView) {
                 imageView = imageView1;
                 info = textView;
                 info.setText("读取成功");
             }
+
             @Override
             public String getDir() {
-                return Contract.context.getFilesDir()+"/test.png";
+                return Contract.context.getFilesDir() + "/test.png";
             }
 
             @Override
@@ -111,7 +102,7 @@ public class DataTest extends AppCompatActivity {
         });
 
         load.setOnClickListener(v -> {
-            new DiskReader(new ReadAgent(imageView2,info));
+            new DiskReader(new ReadAgent(imageView2, info));
         });
     }
 
