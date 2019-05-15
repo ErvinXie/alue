@@ -56,7 +56,7 @@ public class DataTest extends AppCompatActivity {
         });
 
 
-        class SaveAgent implements ImageSaver.AfterSaved {
+        class SaveAgent implements DiskReader.DiskSaveInterface {
             Bitmap bitmap;
             TextView info;
 
@@ -65,23 +65,53 @@ public class DataTest extends AppCompatActivity {
                 info = info1;
             }
 
+
             @Override
             public Bitmap getBitmap() {
                 return bitmap;
             }
 
             @Override
-            public void onFinished(Boolean saved) {
+            public void saved(Boolean saved) {
                 if (saved) {
                     info.setText("成功保存");
                 } else {
                     info.setText("保存失败");
                 }
             }
+
+            @Override
+            public String getDir() {
+                return Contract.context.getFilesDir()+"/test.png";
+            }
+        }
+
+        class ReadAgent implements DiskReader.DiskReadInterface{
+
+            ImageView imageView;
+            TextView info;
+            ReadAgent(ImageView imageView1,TextView textView){
+                imageView = imageView1;
+                info = textView;
+                info.setText("读取成功");
+            }
+            @Override
+            public String getDir() {
+                return Contract.context.getFilesDir()+"/test.png";
+            }
+
+            @Override
+            public void readed(Bitmap bitmap) {
+                imageView.setImageBitmap(bitmap);
+            }
         }
 
         save.setOnClickListener(v -> {
-            new ImageSaver(new SaveAgent(AboutPictures.imageViewToBitmap(imageView1), info), "test.png");
+            new DiskReader(new SaveAgent(AboutPictures.imageViewToBitmap(imageView1), info));
+        });
+
+        load.setOnClickListener(v -> {
+            new DiskReader(new ReadAgent(imageView2,info));
         });
     }
 

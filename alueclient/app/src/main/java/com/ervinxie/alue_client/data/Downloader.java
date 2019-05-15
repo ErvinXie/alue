@@ -3,11 +3,14 @@ package com.ervinxie.alue_client.data;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 public class Downloader {
+    static private final String TAG = "ImageDownloader: ";
+
     private  class DownloadImage extends AsyncTask<String,Void, Bitmap>{
         @Override
         protected void onPreExecute() {
@@ -18,6 +21,7 @@ public class Downloader {
             String imageURL = URL[0];
             Bitmap bitmap = null;
             try {
+                Log.d(TAG,"starting");
                 InputStream input = new java.net.URL(imageURL).openStream();
                 bitmap = BitmapFactory.decodeStream(input);
             } catch (IOException e) {

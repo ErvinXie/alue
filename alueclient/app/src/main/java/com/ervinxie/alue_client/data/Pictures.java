@@ -24,10 +24,10 @@ public class Pictures {
     public Bitmap getPicture() {
         if (Cache == null) {
 //            picture = new Downloader().getBitmapFromURL(UrlId);
-//            ImageSaver.saveBitmap(UrlId + "_cache.png", picture);
+//            DiskReader.saveBitmap(UrlId + "_cache.png", picture);
 
         } else {
-//            picture = ImageSaver.getBitmapFromDir(Cache);
+//            picture = DiskReader.getBitmapFromDir(Cache);
         }
         return picture;
     }
