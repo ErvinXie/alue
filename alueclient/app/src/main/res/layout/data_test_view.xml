@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/data_test_image_1"
+        android:layout_width="match_parent"
+        android:layout_height="244dp"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <EditText
+        android:id="@+id/data_test_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name" />
+
+    <Button
+        android:id="@+id/data_test_get_image_from_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="get Image From Url" />
+
+    <Button
+        android:id="@+id/data_test_save_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SAVE IMAGE" />
+
+    <Button
+        android:id="@+id/data_test_load_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="load Image" />
+
+    <TextView
+        android:id="@+id/data_test_info"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:text="TextView" />
+
+    <ImageView
+        android:id="@+id/data_test_image_2"
+        android:layout_width="match_parent"
+        android:layout_height="226dp"
+        tools:srcCompat="@tools:sample/avatars" />
+</LinearLayout>
