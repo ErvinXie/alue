@@ -1,7 +1,10 @@
 package com.ervinxie.alue_client.data;
 
+import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -9,10 +12,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.util.AboutPictures;
+
+import java.util.List;
 
 public class DataTest extends AppCompatActivity {
     static final String TAG = "DataTest: ";
@@ -20,7 +24,7 @@ public class DataTest extends AppCompatActivity {
     ImageView imageView1, imageView2;
     TextView info;
     EditText url;
-    Button get, save, load;
+    Button get, save, load, create, insert, query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,9 @@ public class DataTest extends AppCompatActivity {
         get = findViewById(R.id.data_test_get_image_from_url);
         save = findViewById(R.id.data_test_save_image);
         load = findViewById(R.id.data_test_load_image);
+        create = findViewById(R.id.data_test_Create_Database);
+        insert = findViewById(R.id.date_test_insert);
+        query = findViewById(R.id.data_test_query);
 
 
         get.setOnClickListener(v -> {
@@ -104,7 +111,45 @@ public class DataTest extends AppCompatActivity {
         load.setOnClickListener(v -> {
             new DiskReader(new ReadAgent(imageView2, info));
         });
+
+
+        AppDatabase database = AppDatabase.getInstance(Contract.context);
+        create.setOnClickListener(v -> {
+
+
+        });
+
+
+        insert.setOnClickListener(v -> {
+            pid++;
+            new Thread(()->{
+                Log.d(TAG,"Insert a "+pid);
+                try {
+                    database.picturesDao().insert(new Pictures(pid, "nul", null, false));
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }).start();
+        });
+
+        query.setOnClickListener(v -> {
+            new Thread(() -> {
+                List<Pictures> list = database.picturesDao().getAllPictures();
+                String s = new String();
+                for (int i = 0; i < list.size(); i++) {
+                    s+=(list.get(i).info());
+                }
+
+                String finalS = s;
+                this.runOnUiThread(()->{
+                    info.setText(finalS);
+                });
+
+            }).start();
+
+        });
     }
 
+    public static int pid = 0;
 
 }
