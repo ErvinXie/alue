@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.util.AboutPictures;
@@ -109,7 +110,15 @@ public class DataTest extends AppCompatActivity {
         });
 
         load.setOnClickListener(v -> {
-            new DiskReader(new ReadAgent(imageView2, info));
+//            new DiskReader(new ReadAgent(imageView2, info));//自己写的读取，备用
+
+            //这种缓存策略可以解决同名图片读取的问题
+            GlideApp
+                    .with(Contract.context)
+                    .load(Contract.context.getFilesDir()+"/test.png")
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imageView2);
         });
 
 
