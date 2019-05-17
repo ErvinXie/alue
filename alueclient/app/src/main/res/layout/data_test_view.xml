@@ -81,7 +81,19 @@
     <TextView
         android:id="@+id/data_test_info"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="62dp"
         android:text="TextView" />
+
+    <Button
+        android:id="@+id/data_test_save_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="save url" />
+
+    <ImageView
+        android:id="@+id/data_test_imageview3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:srcCompat="@tools:sample/avatars" />
 
 </LinearLayout>

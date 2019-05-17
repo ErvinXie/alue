@@ -11,10 +11,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
+import com.ervinxie.alue_client.ViewModels.ImageViewModel;
 import com.ervinxie.alue_client.util.AboutPictures;
 
 import java.util.List;
@@ -22,10 +26,10 @@ import java.util.List;
 public class DataTest extends AppCompatActivity {
     static final String TAG = "DataTest: ";
 
-    ImageView imageView1, imageView2;
+    ImageView imageView1, imageView2,imageView3;
     TextView info;
     EditText url;
-    Button get, save, load, create, insert, query;
+    Button get, save, load, create, insert, query,saveurl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +47,8 @@ public class DataTest extends AppCompatActivity {
         insert = findViewById(R.id.date_test_insert);
         query = findViewById(R.id.data_test_query);
 
+        saveurl = findViewById(R.id.data_test_save_url);
+        imageView3 = findViewById(R.id.data_test_imageview3);
 
         get.setOnClickListener(v -> {
             String Url = url.getText().toString();
@@ -123,11 +129,6 @@ public class DataTest extends AppCompatActivity {
 
 
         AppDatabase database = AppDatabase.getInstance(Contract.context);
-        create.setOnClickListener(v -> {
-
-
-        });
-
 
         insert.setOnClickListener(v -> {
             pid++;
@@ -157,6 +158,19 @@ public class DataTest extends AppCompatActivity {
             }).start();
 
         });
+
+        ImageViewModel imageViewModel = ViewModelProviders.of(this).get(ImageViewModel.class);
+        imageViewModel.getUrl().observe(this,url->{
+            GlideApp
+                    .with(Contract.context)
+                    .load(url)
+                    .into(imageView3);
+        });
+        saveurl.setOnClickListener(v->{
+            imageViewModel.surl = url.getText().toString();
+            imageViewModel.loadUrl();
+        });
+
     }
 
     public static int pid = 0;

@@ -29,4 +29,5 @@ public interface PicturesDao {
 
     @Delete
     void delete(Pictures... pictures);
+
 }

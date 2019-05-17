@@ -61,8 +61,6 @@ public class NetworkTest extends AppCompatActivity {
                             });
 
             Network.getInstance(Contract.context).addToRequestQueue(jsonArrayRequest);
-
         });
-
     }
 }
