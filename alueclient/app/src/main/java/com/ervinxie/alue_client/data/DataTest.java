@@ -1,7 +1,6 @@
 package com.ervinxie.alue_client.data;
 
 import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,25 +10,33 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
-import com.ervinxie.alue_client.ViewModels.ImageViewModel;
+
+import com.ervinxie.alue_client.network.Network;
 import com.ervinxie.alue_client.util.AboutPictures;
+import com.ervinxie.alue_client.util.UrlGenerator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class DataTest extends AppCompatActivity {
     static final String TAG = "DataTest: ";
 
-    ImageView imageView1, imageView2,imageView3;
+    ImageView imageView1, imageView2, imageView3;
     TextView info;
     EditText url;
-    Button get, save, load, create, insert, query,saveurl;
+    Button get, save, load, clear, insert, query, update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +50,11 @@ public class DataTest extends AppCompatActivity {
         get = findViewById(R.id.data_test_get_image_from_url);
         save = findViewById(R.id.data_test_save_image);
         load = findViewById(R.id.data_test_load_image);
-        create = findViewById(R.id.data_test_Create_Database);
+        clear = findViewById(R.id.data_test_Clear_Database);
         insert = findViewById(R.id.date_test_insert);
         query = findViewById(R.id.data_test_query);
 
-        saveurl = findViewById(R.id.data_test_save_url);
-        imageView3 = findViewById(R.id.data_test_imageview3);
+        update = findViewById(R.id.data_test_update);
 
         get.setOnClickListener(v -> {
             String Url = url.getText().toString();
@@ -121,7 +127,7 @@ public class DataTest extends AppCompatActivity {
             //这种缓存策略可以解决同名图片读取的问题
             GlideApp
                     .with(Contract.context)
-                    .load(Contract.context.getFilesDir()+"/test.png")
+                    .load(Contract.context.getFilesDir() + "/test.png")
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
                     .into(imageView2);
@@ -131,12 +137,10 @@ public class DataTest extends AppCompatActivity {
         AppDatabase database = AppDatabase.getInstance(Contract.context);
 
         insert.setOnClickListener(v -> {
-            pid++;
-            new Thread(()->{
-                Log.d(TAG,"Insert a "+pid);
+            new Thread(() -> {
                 try {
-                    database.picturesDao().insert(new Pictures(pid, "nul", null, false));
-                }catch (SQLException e){
+                    database.picturesDao().insert(new Pictures("nul", null, null, null, null, null, null, false, null));
+                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }).start();
@@ -146,12 +150,13 @@ public class DataTest extends AppCompatActivity {
             new Thread(() -> {
                 List<Pictures> list = database.picturesDao().getAllPictures();
                 String s = new String();
+                s += "Pictures Amount: " + database.picturesDao().getPicturesAmount() + "\n";
                 for (int i = 0; i < list.size(); i++) {
-                    s+=(list.get(i).info());
+                    s += (list.get(i).info());
                 }
 
                 String finalS = s;
-                this.runOnUiThread(()->{
+                this.runOnUiThread(() -> {
                     info.setText(finalS);
                 });
 
@@ -159,20 +164,22 @@ public class DataTest extends AppCompatActivity {
 
         });
 
-        ImageViewModel imageViewModel = ViewModelProviders.of(this).get(ImageViewModel.class);
-        imageViewModel.getUrl().observe(this,url->{
-            GlideApp
-                    .with(Contract.context)
-                    .load(url)
-                    .into(imageView3);
+        clear.setOnClickListener(v -> {
+            new Thread(() -> {
+                database.picturesDao().delete();
+            }).start();
         });
-        saveurl.setOnClickListener(v->{
-            imageViewModel.surl = url.getText().toString();
-            imageViewModel.loadUrl();
+
+
+
+        update.setOnClickListener(v -> {
+            new Thread(()->{
+                DataManager.updateDatabase();
+            }).start();
+
         });
 
     }
 
-    public static int pid = 0;
 
 }

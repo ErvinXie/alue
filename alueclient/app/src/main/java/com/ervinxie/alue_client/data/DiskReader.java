@@ -116,4 +116,9 @@ public class DiskReader {
         diskReadInterface=diskReadInterface1;
         new ReadBitmap().execute();
     }
+
+
+
+
+
 }

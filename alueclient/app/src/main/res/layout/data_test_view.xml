@@ -70,30 +70,24 @@
             android:text="Insert" />
 
         <Button
-            android:id="@+id/data_test_Create_Database"
+            android:id="@+id/data_test_Clear_Database"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Create Database" />
+            android:text="Clear Database" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/data_test_info"
         android:layout_width="match_parent"
-        android:layout_height="62dp"
+        android:layout_height="159dp"
         android:text="TextView" />
 
     <Button
-        android:id="@+id/data_test_save_url"
+        android:id="@+id/data_test_update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="save url" />
-
-    <ImageView
-        android:id="@+id/data_test_imageview3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:srcCompat="@tools:sample/avatars" />
+        android:text="update" />
 
 </LinearLayout>
