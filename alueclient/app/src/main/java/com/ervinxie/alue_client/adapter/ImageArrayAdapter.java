@@ -1,61 +1,67 @@
 package com.ervinxie.alue_client.adapter;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Picture;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ervinxie.alue_client.Contract;
 import com.ervinxie.alue_client.R;
+import com.ervinxie.alue_client.data.GlideApp;
+import com.ervinxie.alue_client.data.Pictures;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.ImageViewHolder> {
-    private ArrayList<Bitmap> mDataset;
+public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.PicturesViewHolder> {
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
-        public ImageView imageView;
-        public ImageViewHolder(ImageView v) {
-            super(v);
-            imageView = v;
+
+    private List<Pictures> picturesList;
+
+    public ImageArrayAdapter(List<Pictures> picturesList) {
+        this.picturesList = picturesList;
+    }
+
+    @NonNull
+    @Override
+    public PicturesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_card_view, parent, false);
+        return new PicturesViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PicturesViewHolder holder, int position) {
+        Pictures picture = picturesList.get(position);
+        holder.pictureInfo.setText(picture.info());
+        GlideApp
+                .with(Contract.context)
+                .load("https://img.qiyidao.com/201802/09/150303831.jpg")
+                .into(holder.picture);
+    }
+
+    @Override
+    public int getItemCount() {
+        return picturesList.size();
+    }
+
+    public class PicturesViewHolder extends RecyclerView.ViewHolder {
+        public TextView pictureInfo;
+        public ImageView picture;
+
+        public PicturesViewHolder(@NonNull View itemView) {
+            super(itemView);
+            pictureInfo = itemView.findViewById(R.id.picture_info);
+            picture = itemView.findViewById(R.id.picture);
+
         }
     }
 
-    // Provide a suitable constructor (depends on the kind of dataset)
-    public ImageArrayAdapter(ArrayList<Bitmap> myDataset) {
-        mDataset = myDataset;
-    }
 
-    // Create new views (invoked by the layout manager)
-    @Override
-    public ImageViewHolder onCreateViewHolder(ViewGroup parent,
-                                              int viewType) {
-        // create a new view
-
-        ImageView v = (ImageView) LayoutInflater.from(parent.getContext()).inflate(R.layout.my_image_view,parent, false);
-        ImageViewHolder vh = new ImageViewHolder(v);
-        return vh;
-    }
-
-    // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(ImageViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-//        holder.imageView.setImageResource(R.drawable.ic_launcher_background);
-        holder.imageView.setImageBitmap(mDataset.get(position));
-
-    }
-
-    // Return the size of your dataset (invoked by the layout manager)
-    @Override
-    public int getItemCount() {
-        return mDataset.size();
-    }
 }

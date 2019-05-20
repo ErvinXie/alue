@@ -2,6 +2,7 @@ package com.ervinxie.alue_client;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,68 +12,60 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ervinxie.alue_client.adapter.ImageArrayAdapter;
+import com.ervinxie.alue_client.data.AppDatabase;
+import com.ervinxie.alue_client.data.DataTest;
 import com.ervinxie.alue_client.data.GlideApp;
+import com.ervinxie.alue_client.data.Pictures;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class AlueMainActivity extends AppCompatActivity {
 
     static final String TAG = "AlueMainActivity: ";
 
-    Button load;
+    Button load,to_data_test;
     RecyclerView recyclerView;
-    RecyclerView.Adapter mAdapter;
-    RecyclerView.LayoutManager layoutManager;
+    RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Contract.context = getApplicationContext();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alue_activity_main);
+
         recyclerView = findViewById(R.id.recycler);
-        recyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<Bitmap> myDataset = new ArrayList<Bitmap>();
 
-        ArrayList<String> urls = new ArrayList<String>();
-        urls.add("https://img.freepik.com/free-photo/blue-mountains-famous-tourism-scenery-lijiang_1417-1143.jpg?size=626&ext=jpg");
-        urls.add("https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500");
-        urls.add("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1nfqtF9wv0Y-hj_mQfWFiyhq_0xl0ZCVhioBK0tOzmNwokGlF");
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
+
+        AppDatabase database = AppDatabase.getInstance(Contract.context);
 
         load = findViewById(R.id.load);
-        load.setOnClickListener(v -> {
-            for (int i = 0; i < urls.size(); i++) {
-
-                int finalI = i;
-                new Thread(() -> {
-                    Bitmap bitmap = null;
-                    try {
-                        bitmap = GlideApp
-                                .with(Contract.context)
-                                .asBitmap()
-                                .load(urls.get(finalI))
-                                .submit()
-                                .get();
-                        Log.d(TAG,urls.get(finalI)+" success!");
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    myDataset.add(bitmap);
-                    mAdapter = new ImageArrayAdapter(myDataset);
-                    this.runOnUiThread(()->{
-                        recyclerView.setAdapter(mAdapter);
-                    });
-
-                }).start();
-            }
+        to_data_test = findViewById(R.id.to_data_test);
+        to_data_test.setOnClickListener(v->{
+            Intent intent = new Intent(this,DataTest.class);
+            startActivity(intent);
         });
+        load.setOnClickListener(v -> {
+            new Thread(()->{
+                List<Pictures> picturesList =  database.picturesDao().getAllPictures();
+                for(int i=0;i<picturesList.size();i++){
+                    Log.d(TAG,picturesList.get(i).info());
+                }
+                adapter = new ImageArrayAdapter(picturesList);
+
+                this.runOnUiThread(()->{
+                    recyclerView.setAdapter(adapter);
+                });
+            }).start();
+        });
+
+
 
     }
 

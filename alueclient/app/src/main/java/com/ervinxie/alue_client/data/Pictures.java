@@ -24,6 +24,7 @@ public class Pictures {
     public String FilePath;
     public Boolean Liked;
 
+
     public Pictures(){}
     @Ignore
     public Pictures(int pictureId, String urlId, String filePath, Boolean liked) {
