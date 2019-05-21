@@ -36,7 +36,7 @@ public class DataTest extends AppCompatActivity {
     ImageView imageView1, imageView2, imageView3;
     TextView info;
     EditText url;
-    Button get, save, load, clear, insert, query, update;
+    Button get, save, load, clear, insert, query, update,finish;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +55,7 @@ public class DataTest extends AppCompatActivity {
         query = findViewById(R.id.data_test_query);
 
         update = findViewById(R.id.data_test_update);
+        finish = findViewById(R.id.data_test_finish);
 
         get.setOnClickListener(v -> {
             String Url = url.getText().toString();
@@ -177,6 +178,10 @@ public class DataTest extends AppCompatActivity {
                 DataManager.updateDatabase();
             }).start();
 
+        });
+
+        finish.setOnClickListener(v->{
+            finish();
         });
 
     }

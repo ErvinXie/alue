@@ -32,6 +32,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Data test" />
+
+        <Button
+            android:id="@+id/to_network_test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Net test" />
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TextView" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -40,6 +40,11 @@ public class NetworkTest extends AppCompatActivity {
         Url = findViewById(R.id.network_test_url);
         request = findViewById(R.id.network_test_request);
 
+        Button finish = findViewById(R.id.finish);
+        finish.setOnClickListener(v->{
+            finish();
+        });
+
         request.setOnClickListener(v->{
             JsonArrayRequest jsonArrayRequest = new JsonArrayRequest
                     (Request.Method.GET, Url.getText().toString(), null,

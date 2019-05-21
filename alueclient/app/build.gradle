@@ -78,4 +78,7 @@ dependencies {
 
     // optional - Test helpers for LiveData
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
+
+    // https://github.com/chrisbanes/PhotoView/releases
+    implementation 'com.github.chrisbanes:PhotoView:2.0.0'
 }
