@@ -54,16 +54,18 @@ public class DataManager {
     static void connectAndUpdate(int absent_photos) {
         Log.d(TAG, "connectAndUpdate at " + absent_photos + " absent");
         for (int page = 1; page <= (absent_photos - 1) / 30 + 1; page++) {
-            Log.d(TAG, "connectAndUpdate (" + page + "/" + (absent_photos - 1) / 30 + 1 + ") started");
+            Log.d(TAG, "connectAndUpdate (" + page + "/" + ((absent_photos - 1) / 30 + 1) + ") started");
 
             int finalPage = page;
             JsonArrayRequest collectionPhotosRequest = new JsonArrayRequest
                     (Request.Method.GET, UrlGenerator.CollectionPhotos(finalPage, 30), null,
                             (JSONArray photosResponse) -> {
+                                Log.d(TAG,"requesting: "+UrlGenerator.CollectionPhotos(finalPage, 30));
                                 for (int i = 0; 30 * (finalPage - 1) + i < absent_photos; i++) {
                                     try {
 
                                         JSONObject jsonObject = photosResponse.getJSONObject(i);
+                                        Log.d(TAG,(i+1)+": "+jsonObject.toString());
                                         Pictures pictures = new Pictures();
                                         pictures.setId(jsonObject.getString("id"));
                                         pictures.setLiked(false);
@@ -75,7 +77,11 @@ public class DataManager {
                                         pictures.setUpdate_at(jsonObject.getString("updated_at"));
                                         pictures.setFilePath(null);
 
+                                        pictures.setDescription(jsonObject.getString("description"));
+                                        pictures.setTitle("description");
+
                                         new Thread(() -> database.picturesDao().insert(pictures)).start();
+                                        Log.d(TAG,"absent pictures("+(i+1)+"/"+absent_photos+") have been Updated!");
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -88,6 +94,6 @@ public class DataManager {
 
             Network.getInstance(Contract.context).addToRequestQueue(collectionPhotosRequest);
         }
-        Log.d(TAG,"All absent pictures("+absent_photos+") have been Updated!");
+
     }
 }

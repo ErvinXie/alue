@@ -18,10 +18,10 @@ public class UrlGenerator {
     }
 
     public static String CollectionPhotos(int page,int per_page){
-        return Header+"/collections"+"/"+MainCollectionId+"/"+"photos"+clientId+"&page="+page+"&per_page="+per_page;
+        return Header+"/collections"+"/"+MainCollectionId+"/"+"photos"+clientId+"&per_page="+per_page+"&page="+page;
     }
     public static String CollectionPhotos(String id,int page,int per_page){
-        return Header+"/collections"+"/"+id+"/"+"photos"+clientId+"&page="+page+"&per_page="+per_page;
+        return Header+"/collections"+"/"+id+"/"+"photos"+clientId+"&per_page="+per_page+"&page="+page;
     }
 
 

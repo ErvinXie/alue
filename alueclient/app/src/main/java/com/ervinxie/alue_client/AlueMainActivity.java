@@ -32,16 +32,13 @@ public class AlueMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Contract.context = getApplicationContext();
+        Contract.alueMainActivity = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alue_activity_main);
 
         recyclerView = findViewById(R.id.recycler);
-
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
 
         AppDatabase database = AppDatabase.getInstance(Contract.context);
 
