@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:background="@color/colorPrimaryDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -19,6 +20,9 @@
                 android:id="@+id/picture"
                 android:layout_width="match_parent"
                 android:layout_height="197dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="3dp"
+                android:background="#00000000"
                 app:srcCompat="@mipmap/ic_launcher_round" />
 
         </LinearLayout>

@@ -11,30 +11,31 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/contentPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#00222222"
         android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.github.chrisbanes.photoview.PhotoView
-                android:id="@+id/photoView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="40dp"
+                android:background="#001D1D1D"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
@@ -57,35 +58,33 @@
             tools:ignore="UselessParent">
 
             <ImageButton
-                android:id="@+id/set_wallpaper"
+                android:id="@+id/imageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:background="@color/color30Transparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_baseline_smartphone_144px" />
+                app:srcCompat="@drawable/ic_bubble_chart_white_144dp" />
 
             <ImageButton
-                android:id="@+id/download_wallpaper"
+                android:id="@+id/imageButton2"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:background="@color/color30Transparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_baseline_smartphone_144px"
-                />
+                app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
 
             <ImageButton
-                android:id="@+id/scale_wallpaper"
+                android:id="@+id/nav_info"
                 android:layout_width="wrap_content"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_weight="1"
+                android:background="@color/color30Transparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_baseline_smartphone_144px"
-                />
-
-
+                app:srcCompat="@drawable/ic_outline_dashboard_144px" />
 
         </LinearLayout>
     </FrameLayout>
 
 </FrameLayout>
-

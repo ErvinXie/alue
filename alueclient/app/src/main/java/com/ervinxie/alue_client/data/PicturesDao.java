@@ -21,12 +21,18 @@ public interface PicturesDao {
     @Query("SELECT * FROM PICTURES ORDER BY PictureId ")
     List<Pictures> getAllPictures();
 
+    @Query("SELECT * FROM PICTURES ORDER BY PictureId DESC")
+    List<Pictures> getAllPicturesDesc();
+
+
     @Query("SELECT COUNT(*) FROM PICTURES")
     int getPicturesAmount();
 
     @Query("DELETE FROM PICTURES")
     void delete();
 
+    @Query("SELECT MAX(PictureId) FROM Pictures")
+    int getMaxId();
 
     @Insert
     void insert(Pictures pictures);

@@ -12,9 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.ervinxie.alue_client.Contract;
-import com.ervinxie.alue_client.ImageInspectorActivity;
+import com.ervinxie.alue_client.util.Contract;
+import com.ervinxie.alue_client.Activity.ImageInspectorActivity;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.data.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
@@ -50,6 +51,8 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
         GlideApp
                 .with(Contract.context)
                 .load(urlSmall)
+                .error(R.drawable.ic_clear_white_24dp)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .thumbnail(GlideApp.with(Contract.context).load(urlThumb).apply(requestOptions))
                 .apply(requestOptions)
                 .into(holder.picture);
@@ -59,6 +62,8 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
 
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(Contract.context, ImageInspectorActivity.class);
+            intent.putExtra("urlRaw", picture.getUrlRaw());
+            intent.putExtra("urlFull", picture.getUrlFull());
             intent.putExtra("urlRegular", urlRegular);
             intent.putExtra("urlSmall", urlSmall);
             intent.putExtra("title", picture.getTitle());

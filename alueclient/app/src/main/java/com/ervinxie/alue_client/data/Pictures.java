@@ -42,7 +42,7 @@ public class Pictures {
 
     @Ignore
     public String info() {
-        return "Id:" + Id + " regularUrl: " + urlRegular + " FilePath:" + FilePath + " Liked:" + Liked + "\n";
+        return "Pid:"+PictureId+" Id:" + Id + " regularUrl: " + urlRegular + " FilePath:" + FilePath + " Liked:" + Liked + "\n";
     }
 
     public void setId(String id) {
@@ -135,5 +135,9 @@ public class Pictures {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setPictureId(int pictureId) {
+        PictureId = pictureId;
     }
 }

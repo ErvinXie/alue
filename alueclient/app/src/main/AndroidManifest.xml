@@ -14,9 +14,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".AlueMainActivity">
+
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        >
+        <activity android:name=".Activity.AlueMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +26,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ImageInspectorActivity">
+        <activity android:name=".Activity.AboutActicity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".Activity.ImageInspectorActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
