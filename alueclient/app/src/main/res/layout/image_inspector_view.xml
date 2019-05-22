@@ -52,36 +52,53 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-
+            android:background="@color/color30Transparent"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <ImageButton
                 android:id="@+id/set_wallpaper"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_baseline_smartphone_144px" />
 
             <ImageButton
-                android:id="@+id/download_wallpaper"
-                android:layout_width="wrap_content"
+                android:id="@+id/like"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_baseline_smartphone_144px"
-                />
+                app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
 
             <ImageButton
                 android:id="@+id/scale_wallpaper"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
-                android:background="@color/colorPrimaryDark"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_baseline_smartphone_144px"
-                />
+                app:srcCompat="@drawable/ic_outline_center_focus_strong_144px" />
 
+            <ImageButton
+                android:id="@+id/download_wallpaper"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_outline_cloud_download_144px" />
 
 
         </LinearLayout>

@@ -19,7 +19,7 @@ public class DataManager {
     private DataManager() {
     }
 
-    static AppDatabase database = AppDatabase.getInstance(Contract.context);
+    public static AppDatabase database = AppDatabase.getInstance(Contract.context);
 
     public static void updateDatabase() {
         int database_photos = database.picturesDao().getPicturesAmount();

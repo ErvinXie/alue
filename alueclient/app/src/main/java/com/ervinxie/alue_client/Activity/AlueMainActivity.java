@@ -3,20 +3,19 @@ package com.ervinxie.alue_client.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.adapter.ImageArrayAdapter;
 import com.ervinxie.alue_client.data.AppDatabase;
 import com.ervinxie.alue_client.data.DataManager;
-import com.ervinxie.alue_client.data.DataTest;
+import com.ervinxie.alue_client.data.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.util.FullscreenActivity;
@@ -28,7 +27,7 @@ public class AlueMainActivity extends FullscreenActivity {
 
     static final String TAG = "AlueMainActivity: ";
 
-    ImageButton nav_picture, nav_info;
+    ImageButton nav_bubble, nav_info, nav_like;
     LinearLayout linearLayout;
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -38,6 +37,8 @@ public class AlueMainActivity extends FullscreenActivity {
     RecyclerView.Adapter adapter;
 
     AppDatabase database;
+
+    Boolean liked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +54,40 @@ public class AlueMainActivity extends FullscreenActivity {
         mContentView = linearLayout;
         swipeRefreshLayout = findViewById(R.id.swipeContainer);
 
-        nav_picture = findViewById(R.id.imageButton);
+        nav_bubble = findViewById(R.id.nav_bubble);
         nav_info = findViewById(R.id.nav_info);
+        nav_like = findViewById(R.id.like);
 
         nav_info.setOnClickListener(v -> {
             Intent intent = new Intent(Contract.context, AboutActicity.class);
             startActivity(intent);
         });
-        nav_picture.setOnClickListener(v -> {
-
+        nav_bubble.setOnClickListener(v -> {
+            delayedHide(3000);
+        });
+        nav_like.setOnClickListener(v -> {
+            if (liked) {
+                liked = false;
+                loadContent();
+                GlideApp
+                        .with(Contract.context)
+                        .load(R.drawable.ic_baseline_favorite_border_144px)
+                        .error(R.drawable.ic_clear_white_144dp)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(nav_like);
+            } else {
+                liked = true;
+                loadContent();
+                GlideApp
+                        .with(Contract.context)
+                        .load(R.drawable.ic_baseline_favorite_144px)
+                        .error(R.drawable.ic_clear_white_144dp)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(nav_like);
+            }
         });
 
-        new Thread(() -> {
-            DataManager.updateDatabase();
-        }).start();
+        updateDatabaseAndLoadContent();
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             show();
@@ -87,6 +108,7 @@ public class AlueMainActivity extends FullscreenActivity {
             public void onScrolledUp() {
                 super.onScrolledUp();
                 show();
+                delayedHide(3000);
             }
 
             @Override
@@ -120,28 +142,21 @@ public class AlueMainActivity extends FullscreenActivity {
             while (Contract.isLoading) ;
 
             Log.d(TAG, "Database reading");
-            List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
-            for (int i = 0; i < picturesList.size(); i++) {
-                Log.d(TAG, picturesList.get(i).info());
-            }
-            adapter = new ImageArrayAdapter(picturesList);
-
-            this.runOnUiThread(() -> {
-                recyclerView.setAdapter(adapter);
-
-                swipeRefreshLayout.setRefreshing(false);
-            });
+            loadContent();
         }).start();
 
     }
 
     private void loadContent() {
         new Thread(() -> {
-
-
             List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
-            for (int i = 0; i < picturesList.size(); i++) {
-                Log.d(TAG, picturesList.get(i).info());
+            if (liked) {
+                for (int i = 0; i < picturesList.size(); i++) {
+                    if (picturesList.get(i).getLiked() == false) {
+                        picturesList.remove(i);
+                        i--;
+                    }
+                }
             }
             adapter = new ImageArrayAdapter(picturesList);
 

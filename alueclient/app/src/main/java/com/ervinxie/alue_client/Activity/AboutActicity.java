@@ -30,7 +30,11 @@ public class AboutActicity extends FullscreenActivity {
 
         mContentView = linearLayout;
         AUTO_HIDE = true;
-        mContentView.setOnClickListener(v->toggle());
+        mContentView.setOnClickListener(v->{
+            toggle();
+            delayedHide(3000);
+        });
+
 
         to_data_test.setOnClickListener(v -> {
             Intent intent = new Intent(this, DataTest.class);

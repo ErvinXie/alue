@@ -51,7 +51,7 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
         GlideApp
                 .with(Contract.context)
                 .load(urlSmall)
-                .error(R.drawable.ic_clear_white_24dp)
+                .error(R.drawable.ic_clear_white_144dp)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .thumbnail(GlideApp.with(Contract.context).load(urlThumb).apply(requestOptions))
                 .apply(requestOptions)
@@ -62,6 +62,8 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
 
         holder.linearLayout.setOnClickListener(v -> {
             Intent intent = new Intent(Contract.context, ImageInspectorActivity.class);
+            intent.putExtra("liked",picture.getLiked());
+            intent.putExtra("id",picture.getId());
             intent.putExtra("urlRaw", picture.getUrlRaw());
             intent.putExtra("urlFull", picture.getUrlFull());
             intent.putExtra("urlRegular", urlRegular);

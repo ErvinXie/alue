@@ -45,6 +45,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:fitsSystemWindows="true">
 
         <LinearLayout
@@ -54,33 +55,40 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
 
+            android:background="@color/color30Transparent"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
             <ImageButton
-                android:id="@+id/imageButton"
-                android:layout_width="wrap_content"
+                android:id="@+id/nav_bubble"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/color30Transparent"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_bubble_chart_white_144dp" />
 
             <ImageButton
-                android:id="@+id/imageButton2"
-                android:layout_width="wrap_content"
+                android:id="@+id/like"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/color30Transparent"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
 
             <ImageButton
                 android:id="@+id/nav_info"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:background="@color/color30Transparent"
+                android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
                 app:srcCompat="@drawable/ic_outline_dashboard_144px" />
 
