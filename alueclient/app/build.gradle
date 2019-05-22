@@ -86,4 +86,6 @@ dependencies {
 
     // https://github.com/chrisbanes/PhotoView/releases
     implementation 'com.github.chrisbanes:PhotoView:2.0.0'
+
+    compile (name: 'alipaySdk-15.6.2-20190416165036', ext: 'aar')
 }

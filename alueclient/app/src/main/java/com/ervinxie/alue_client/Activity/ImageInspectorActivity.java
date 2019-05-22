@@ -194,12 +194,20 @@ public class ImageInspectorActivity extends FullscreenActivity {
                     float wScale = pictureWidth / (rectF.right - rectF.left) * bitmap.getWidth() / pictureWidth;
 
 
+                    Log.d(TAG, "recf: "+rectF.left + " " + rectF.right + " " + rectF.top + " " + rectF.bottom);
+
                     Rect rect = new Rect();
+
                     rect.top = (int) (((0 - rectF.top) * hScale));
                     rect.bottom = (int) ((rect.top + viewHeight * hScale));
                     rect.left = (int) (((0 - rectF.left) * wScale));
                     rect.right = (int) ((rect.left + viewWidth * wScale));
-                    Log.d(TAG, rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
+
+
+                    Log.d(TAG,"viewWidth:"+viewWidth+" viewHeight:"+viewHeight);
+                    Log.d(TAG,"pictureWidth:"+pictureWidth+" pictureHeight:"+pictureHeight);
+                    Log.d(TAG,"bitmapWidth:"+bitmap.getWidth()+" bitmapHeight:"+bitmap.getHeight());
+                    Log.d(TAG, "rec: "+rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
 
 
                     WallpaperManager wallpaperManager = WallpaperManager.getInstance(Contract.alueMainActivity);
