@@ -60,7 +60,6 @@ public class ImageInspectorActivity extends FullscreenActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         linearLayout = findViewById(R.id.contentPanel);
         mContentView = linearLayout;
-        AUTO_HIDE = true;
 
 
         setWallpaper = findViewById(R.id.set_wallpaper);
@@ -144,7 +143,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
         });
 
         setWallpaper.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
 
             float minimumscale = getMinimunScale();
             if (photoView.getScale() < minimumscale) {
@@ -175,8 +174,9 @@ public class ImageInspectorActivity extends FullscreenActivity {
                         bitmap = GlideApp
                                 .with(Contract.context)
                                 .asBitmap()
-                                .load(urlFull)
+                                .load(urlRegular)
                                 .submit().get();
+
                     } catch (ExecutionException e) {
 
                         e.printStackTrace();
@@ -185,39 +185,41 @@ public class ImageInspectorActivity extends FullscreenActivity {
                         e.printStackTrace();
                     }
 
-                    DisplayMetrics metrics = new DisplayMetrics();
-                    getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                    int height = metrics.heightPixels;
-                    int width = metrics.widthPixels;
+                    if(bitmap!=null) {
+                        DisplayMetrics metrics = new DisplayMetrics();
+                        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                        int height = metrics.heightPixels;
+                        int width = metrics.widthPixels;
 
-                    float hScale = pictureHeight / (rectF.bottom - rectF.top) * bitmap.getHeight() / pictureHeight;
-                    float wScale = pictureWidth / (rectF.right - rectF.left) * bitmap.getWidth() / pictureWidth;
-
-
-                    Log.d(TAG, "recf: "+rectF.left + " " + rectF.right + " " + rectF.top + " " + rectF.bottom);
-
-                    Rect rect = new Rect();
-
-                    rect.top = (int) (((0 - rectF.top) * hScale));
-                    rect.bottom = (int) ((rect.top + viewHeight * hScale));
-                    rect.left = (int) (((0 - rectF.left) * wScale));
-                    rect.right = (int) ((rect.left + viewWidth * wScale));
+                        float hScale = pictureHeight / (rectF.bottom - rectF.top) * bitmap.getHeight() / pictureHeight;
+                        float wScale = pictureWidth / (rectF.right - rectF.left) * bitmap.getWidth() / pictureWidth;
 
 
-                    Log.d(TAG,"viewWidth:"+viewWidth+" viewHeight:"+viewHeight);
-                    Log.d(TAG,"pictureWidth:"+pictureWidth+" pictureHeight:"+pictureHeight);
-                    Log.d(TAG,"bitmapWidth:"+bitmap.getWidth()+" bitmapHeight:"+bitmap.getHeight());
-                    Log.d(TAG, "rec: "+rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
+                        Log.d(TAG, "recf: " + rectF.left + " " + rectF.right + " " + rectF.top + " " + rectF.bottom);
+
+                        Rect rect = new Rect();
+
+                        rect.top = (int) (((0 - rectF.top) * hScale));
+                        rect.bottom = (int) ((rect.top + viewHeight * hScale));
+                        rect.left = (int) (((0 - rectF.left) * wScale));
+                        rect.right = (int) ((rect.left + viewWidth * wScale));
 
 
-                    WallpaperManager wallpaperManager = WallpaperManager.getInstance(Contract.alueMainActivity);
-                    wallpaperManager.setWallpaperOffsetSteps(1, 1);
-                    wallpaperManager.suggestDesiredDimensions(width, height);
-                    try {
-                        wallpaperManager.setBitmap(bitmap,rect,true);
-                        ok=true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.d(TAG, "viewWidth:" + viewWidth + " viewHeight:" + viewHeight);
+                        Log.d(TAG, "pictureWidth:" + pictureWidth + " pictureHeight:" + pictureHeight);
+                        Log.d(TAG, "bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                        Log.d(TAG, "rec: " + rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
+
+
+                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(Contract.alueMainActivity);
+                        wallpaperManager.setWallpaperOffsetSteps(1, 1);
+                        wallpaperManager.suggestDesiredDimensions(width, height);
+                        try {
+                            wallpaperManager.setBitmap(bitmap, rect, true);
+                            ok = true;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     if (ok) {
@@ -262,7 +264,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
         });
 
         saveImage.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
             GlideApp
                     .with(Contract.context)
                     .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
@@ -322,7 +324,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
 
 
         scale.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
             if (isScaled) {
                 Log.d(TAG, "to not Scaled");
                 photoView.setMinimumScale(1.0f);

@@ -48,10 +48,11 @@ public class AboutActicity extends FullscreenActivity {
         offer_me_coffe = findViewById(R.id.offer_me_coffee);
 
         mContentView = linearLayout;
-        AUTO_HIDE = true;
+
         mContentView.setOnClickListener(v -> {
             toggle();
-            delayedHide(3000);
+
+            if(AUTO_HIDE){delayedHide(3000);}
         });
 
 

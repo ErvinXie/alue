@@ -59,17 +59,17 @@ public class AlueMainActivity extends FullscreenActivity {
         nav_like = findViewById(R.id.like);
 
         nav_info.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
             Intent intent = new Intent(Contract.context, AboutActicity.class);
             startActivity(intent);
         });
         nav_bubble.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
             swipeRefreshLayout.setRefreshing(true);
             updateDatabaseAndLoadContent();
         });
         nav_like.setOnClickListener(v -> {
-            delayedHide(3000);
+            if(AUTO_HIDE){delayedHide(3000);}
             if (liked) {
                 liked = false;
                 loadContent();
@@ -112,7 +112,7 @@ public class AlueMainActivity extends FullscreenActivity {
             public void onScrolledUp() {
                 super.onScrolledUp();
                 show();
-                delayedHide(3000);
+                if(AUTO_HIDE){delayedHide(3000);}
             }
 
             @Override
