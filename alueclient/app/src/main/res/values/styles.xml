@@ -10,6 +10,9 @@
 
         <item name="android:statusBarColor">@color/colorTransparent</item>
         <item name="android:navigationBarColor">@color/color30Transparent</item>
+
+
     </style>
+
 
 </resources>

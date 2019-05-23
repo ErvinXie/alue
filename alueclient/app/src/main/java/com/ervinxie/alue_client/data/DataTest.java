@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.ervinxie.alue_client.util.myglide.GlideApp;
 import androidx.appcompat.app.AppCompatActivity;
 
 

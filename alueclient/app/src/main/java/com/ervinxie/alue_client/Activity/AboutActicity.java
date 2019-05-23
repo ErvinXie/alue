@@ -135,9 +135,7 @@ public class AboutActicity extends FullscreenActivity {
                 default:
                     break;
             }
-        }
-
-        ;
+        };
     };
 
     /**

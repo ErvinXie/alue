@@ -5,34 +5,38 @@ import android.app.WallpaperManager;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.data.DataManager;
-import com.ervinxie.alue_client.data.GlideApp;
-import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.AboutPictures;
+import com.ervinxie.alue_client.util.myglide.GlideApp;
+import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.util.DrawableGen;
 import com.ervinxie.alue_client.util.FullscreenActivity;
+import com.ervinxie.alue_client.util.myglide.GlideImageLoader;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.IOException;
@@ -41,11 +45,11 @@ import java.util.concurrent.ExecutionException;
 public class ImageInspectorActivity extends FullscreenActivity {
 
     public static final String TAG = "ImageInspectorActivity:";
-    ImageButton setWallpaper, saveImage, scale, like;
+    ImageButton setWallpaper_button, saveImage, like_button;
     //    Button finish;
     PhotoView photoView;
+    ProgressBar progressBar;
 
-    Boolean isScaled;
     LinearLayout linearLayout;
 
     Boolean liked;
@@ -55,45 +59,24 @@ public class ImageInspectorActivity extends FullscreenActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_inspector_view);
-
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         linearLayout = findViewById(R.id.contentPanel);
         mContentView = linearLayout;
 
 
-        setWallpaper = findViewById(R.id.set_wallpaper);
+        setWallpaper_button = findViewById(R.id.set_wallpaper);
         saveImage = findViewById(R.id.download_wallpaper);
-        scale = findViewById(R.id.scale_wallpaper);
-        like = findViewById(R.id.like);
+        like_button = findViewById(R.id.like);
         photoView = findViewById(R.id.photoView);
-        isScaled = false;
+        progressBar = findViewById(R.id.progressBar);
 
 
-        photoView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
-                if (AUTO_HIDE) {
-                    delayedHide(3000);
-                }
-            }
-        });
-
-
-//        finish = findViewById(R.id.finish);
-//        finish.setOnClickListener(v -> {
-//            finish();
-//        });
+        photoView.setOnClickListener(v -> toggle());
 
         liked = getIntent().getBooleanExtra("liked", false);
-        if (liked) {
-            GlideApp
-                    .with(Contract.context)
-                    .load(R.drawable.ic_baseline_favorite_144px)
-                    .error(R.drawable.ic_clear_white_144dp)
-                    .into(like);
-        }
+        UIHandler.sendEmptyMessage(liked ? Like : DisLike);
+
 
         String Id = getIntent().getStringExtra("id");
         String urlRaw = getIntent().getStringExtra("urlRaw");
@@ -104,183 +87,110 @@ public class ImageInspectorActivity extends FullscreenActivity {
         String pictureDescription = getIntent().getStringExtra("description");
 
 
-        GlideApp
-                .with(Contract.context)
-                .load(urlFull)
-                .error(R.drawable.ic_clear_white_144dp)
-                .transition(DrawableTransitionOptions.withCrossFade())
-
-                .placeholder(DrawableGen.getCircularProgressDrawable())
-                .thumbnail(GlideApp.with(Contract.context).load(urlSmall))
-                .into(photoView);
-
-
-        like.setOnClickListener(v -> {
-            like.setClickable(false);
-            if (liked) {
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_baseline_favorite_border_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(like);
-            } else {
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_baseline_favorite_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(like);
+        new GlideImageLoader(photoView, progressBar) {
+            public void onSuccess() {
+                UIHandler.sendEmptyMessageAtTime(Scale, 500);
             }
+        }.load(urlRegular, new RequestOptions()
+                .error(R.drawable.ic_clear_white_144dp)
+                .priority(Priority.HIGH));
 
+
+        new GlideImageLoader(photoView,null).preload(urlFull, new RequestOptions());
+
+
+        like_button.setOnClickListener(v -> {
+            like_button.setClickable(false);
             new Thread(() -> {
                 Pictures pictures = DataManager.database.picturesDao().getPicturesById(Id);
                 liked = !liked;
                 pictures.setLiked(liked);
                 DataManager.database.picturesDao().update(pictures);
-                runOnUiThread(()->{
-                    like.setClickable(true);
+
+                UIHandler.sendEmptyMessage(liked ? Like : DisLike);
+
+                runOnUiThread(() -> {
+                    like_button.setClickable(true);
                 });
             }).start();
-
         });
 
-        setWallpaper.setOnClickListener(v -> {
-            setWallpaper.setClickable(false);
-            if(AUTO_HIDE){delayedHide(3000);}
 
-            float minimumscale = getMinimunScale();
-            if (photoView.getScale() < minimumscale) {
-                ToastShort("必须缩放至图片填充屏幕");
-            } else {
+        setWallpaper_button.setOnClickListener(v -> {
+            UIHandler.sendEmptyMessage(SettingWallPaper);
 
-                float pictureWidth = photoView.getDrawable().getBounds().width();
-                float pictureHeight = photoView.getDrawable().getBounds().height();
-                float viewWidth = photoView.getWidth();
-                float viewHeight = photoView.getHeight();
+            float pictureWidth = photoView.getDrawable().getBounds().width();
+            float pictureHeight = photoView.getDrawable().getBounds().height();
+            float viewWidth = photoView.getWidth();
+            float viewHeight = photoView.getHeight();
+            RectF rectF = photoView.getDisplayRect();
+
+            new Thread(() -> {
+                Log.d(TAG, "setting wallpaper");
+                Bitmap bitmap = null;
+                Boolean setOk = false;
+                try {
+                    Log.d(TAG, "downloading wallpaper");
+                    bitmap = GlideApp
+                            .with(Contract.context)
+                            .asBitmap()
+                            .load(urlFull)
+                            .submit().get();
+
+                } catch (ExecutionException e) {
+
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+
+                    e.printStackTrace();
+                }
+
+                if (bitmap != null) {
+                    DisplayMetrics metrics = new DisplayMetrics();
+                    getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                    int height = metrics.heightPixels;
+                    int width = metrics.widthPixels;
+
+                    float hScale = pictureHeight / (rectF.bottom - rectF.top) * bitmap.getHeight() / pictureHeight;
+                    float wScale = pictureWidth / (rectF.right - rectF.left) * bitmap.getWidth() / pictureWidth;
 
 
-                RectF rectF = photoView.getDisplayRect();
+                    Log.d(TAG, "recf: " + rectF.left + " " + rectF.right + " " + rectF.top + " " + rectF.bottom);
 
-                GlideApp
-                        .with(Contract.context)
-                        .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(setWallpaper);
+                    Rect rect = new Rect();
 
-                new Thread(() -> {
-                    Log.d(TAG, "setting wallpaper");
-                    Bitmap bitmap = null;
-                    Boolean ok = false;
+                    rect.top = (int) (((0 - rectF.top) * hScale));
+                    rect.bottom = (int) ((rect.top + viewHeight * hScale));
+                    rect.left = (int) (((0 - rectF.left) * wScale));
+                    rect.right = (int) ((rect.left + viewWidth * wScale));
+
+
+                    Log.d(TAG, "viewWidth:" + viewWidth + " viewHeight:" + viewHeight);
+                    Log.d(TAG, "pictureWidth:" + pictureWidth + " pictureHeight:" + pictureHeight);
+                    Log.d(TAG, "bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                    Log.d(TAG, "rec: " + rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
+
+
+                    WallpaperManager wallpaperManager = WallpaperManager.getInstance(Contract.alueMainActivity);
+                    wallpaperManager.setWallpaperOffsetSteps(1, 1);
+                    wallpaperManager.suggestDesiredDimensions(width, height);
                     try {
-                        Log.d(TAG, "downloading wallpaper");
-                        bitmap = GlideApp
-                                .with(Contract.context)
-                                .asBitmap()
-                                .load(urlRegular)
-                                .submit().get();
-
-                    } catch (ExecutionException e) {
-
-                        e.printStackTrace();
-                    } catch (InterruptedException e) {
-
+                        wallpaperManager.setBitmap(bitmap, rect, true);
+                        setOk = true;
+                    } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-                    if(bitmap!=null) {
-                        DisplayMetrics metrics = new DisplayMetrics();
-                        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                        int height = metrics.heightPixels;
-                        int width = metrics.widthPixels;
-
-                        float hScale = pictureHeight / (rectF.bottom - rectF.top) * bitmap.getHeight() / pictureHeight;
-                        float wScale = pictureWidth / (rectF.right - rectF.left) * bitmap.getWidth() / pictureWidth;
-
-
-                        Log.d(TAG, "recf: " + rectF.left + " " + rectF.right + " " + rectF.top + " " + rectF.bottom);
-
-                        Rect rect = new Rect();
-
-                        rect.top = (int) (((0 - rectF.top) * hScale));
-                        rect.bottom = (int) ((rect.top + viewHeight * hScale));
-                        rect.left = (int) (((0 - rectF.left) * wScale));
-                        rect.right = (int) ((rect.left + viewWidth * wScale));
-
-
-                        Log.d(TAG, "viewWidth:" + viewWidth + " viewHeight:" + viewHeight);
-                        Log.d(TAG, "pictureWidth:" + pictureWidth + " pictureHeight:" + pictureHeight);
-                        Log.d(TAG, "bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
-                        Log.d(TAG, "rec: " + rect.left + " " + rect.right + " " + rect.top + " " + rect.bottom);
-
-
-                        WallpaperManager wallpaperManager = WallpaperManager.getInstance(Contract.alueMainActivity);
-                        wallpaperManager.setWallpaperOffsetSteps(1, 1);
-                        wallpaperManager.suggestDesiredDimensions(width, height);
-                        try {
-                            wallpaperManager.setBitmap(bitmap, rect, true);
-                            ok = true;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    if (ok) {
-                        runOnUiThread(() -> {
-                            GlideApp
-                                    .with(Contract.context)
-                                    .load(R.drawable.ic_baseline_done_144px)
-                                    .error(R.drawable.ic_clear_white_144dp)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(setWallpaper);
-                            ToastShort("壁纸设置成功");
-                        });
-                    } else {
-                        runOnUiThread(() -> {
-                            GlideApp
-                                    .with(Contract.context)
-                                    .load(R.drawable.ic_clear_white_144dp)
-                                    .error(R.drawable.ic_clear_white_144dp)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(setWallpaper);
-                            ToastShort("壁纸设置失败");
-                        });
-                    }
-
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(2250);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        runOnUiThread(() -> {
-                            GlideApp
-                                    .with(Contract.context)
-                                    .load(R.drawable.ic_baseline_smartphone_144px)
-                                    .error(R.drawable.ic_clear_white_144dp)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(setWallpaper);
-                            setWallpaper.setClickable(true);
-                        });
-                    }).start();
-                }).start();
-            }
+                }
+                UIHandler.sendEmptyMessage(setOk ? SucceedSettingWallPaper : FailedSettingWallPaper);
+            }).start();
         });
 
         saveImage.setOnClickListener(v -> {
-            saveImage.setClickable(false);
-            if(AUTO_HIDE){delayedHide(3000);}
-            GlideApp
-                    .with(Contract.context)
-                    .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
-                    .error(R.drawable.ic_clear_white_144dp)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(saveImage);
+            UIHandler.sendEmptyMessage(SavingImage);
             new Thread(() -> {
                 Log.d(TAG, "saving wallpaper");
                 Bitmap bitmap = null;
-                Boolean ok = false;
+                Boolean savingOk = false;
                 try {
                     bitmap = GlideApp
                             .with(Contract.context)
@@ -292,83 +202,158 @@ public class ImageInspectorActivity extends FullscreenActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 if (ContextCompat.checkSelfPermission(Contract.context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     Log.d(TAG, "requesting permission");
                     ActivityCompat.requestPermissions(Contract.alueMainActivity,
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             2);
                 } else {
-                    if(bitmap!=null) {
+                    if (bitmap != null) {
                         MediaStore.Images.Media.insertImage(Contract.context.getContentResolver(), bitmap, pictureTitle, pictureDescription);
                         Log.d(TAG, "wallpaper saved");
-                        ok = true;
+                        savingOk = true;
                     }
                 }
-                if (ok) {
-                    runOnUiThread(() -> {
-                        GlideApp
-                                .with(Contract.context)
-                                .load(R.drawable.ic_baseline_cloud_done_144px)
-                                .error(R.drawable.ic_clear_white_144dp)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(saveImage);
-                        ToastShort("保存图片成功");
-                        saveImage.setClickable(true);
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        GlideApp
-                                .with(Contract.context)
-                                .load(R.drawable.ic_outline_cloud_download_144px)
-                                .error(R.drawable.ic_clear_white_144dp)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(saveImage);
-                        ToastShort("保存图片失败");
-                        saveImage.setClickable(true);
-                    });
-                }
-
+                UIHandler.sendEmptyMessage(savingOk ? SucceedSavingImage : FailedSavingImage);
             }).start();
 
         });
 
-
-        scale.setOnClickListener(v -> {
-            if(AUTO_HIDE){delayedHide(3000);}
-            if (isScaled) {
-                Log.d(TAG, "to not Scaled");
-                photoView.setMinimumScale(1.0f);
-                photoView.setMaximumScale(8.0f);
-                photoView.setMediumScale(2.0f);
-                photoView.setScale(1.0f);
-                isScaled = false;
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_outline_center_focus_strong_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(scale);
-
-            } else {
-                Log.d(TAG, "to Scaled");
-                float minimumscale = getMinimunScale();
-                photoView.setMaximumScale(minimumscale + 5.0f);
-                photoView.setMediumScale(minimumscale + 2.0f);
-                photoView.setMinimumScale(minimumscale);
-                photoView.setScale(minimumscale);
-
-                isScaled = true;
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_baseline_center_focus_strong_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(scale);
-            }
-
-        });
     }
+
+
+    private static final int Like = 0;
+    private static final int DisLike = 1;
+    private static final int SettingWallPaper = 2;
+    private static final int SucceedSettingWallPaper = 3;
+    private static final int FailedSettingWallPaper = 4;
+    private static final int WallPaperSet = 5;
+    private static final int Scale = 6;
+
+    private static final int SavingImage = 7;
+    private static final int SucceedSavingImage = 8;
+    private static final int FailedSavingImage = 9;
+//    private static final int Scale = 10;
+//    private static final int Scale = 11;
+
+
+    private static final int LoadFullImage = 100;
+
+    private Handler UIHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case Like: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_favorite_144px)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(like_button);
+                    break;
+                }
+                case DisLike: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_favorite_border_144px)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(like_button);
+                    break;
+                }
+                case SettingWallPaper: {
+                    setWallpaper_button.setClickable(false);
+                    ToastShort("正在设置壁纸");
+                    GlideApp
+                            .with(Contract.context)
+                            .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(setWallpaper_button);
+                    break;
+                }
+                case SucceedSettingWallPaper: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_done_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(setWallpaper_button);
+                    ToastShort("壁纸设置成功");
+                    UIHandler.sendEmptyMessageAtTime(WallPaperSet, 2000);
+                    break;
+                }
+                case FailedSettingWallPaper: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_clear_white_144dp)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(setWallpaper_button);
+                    ToastShort("壁纸设置失败");
+                    UIHandler.sendEmptyMessageAtTime(WallPaperSet, 2000);
+                    break;
+                }
+                case WallPaperSet: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_smartphone_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(setWallpaper_button);
+                    setWallpaper_button.setClickable(true);
+                    break;
+                }
+                case LoadFullImage: {
+
+
+                    break;
+                }
+                case Scale: {
+                    float minimumscale = getMinimunScale();
+                    photoView.setMaximumScale(minimumscale + 5.0f);
+                    photoView.setMediumScale(minimumscale + 2.0f);
+                    photoView.setMinimumScale(minimumscale);
+                    photoView.setScale(minimumscale);
+                    Log.d(TAG, minimumscale + "photoView.getScale()" + photoView.getScale());
+                    photoView.refreshDrawableState();
+
+                    break;
+                }
+                case SavingImage: {
+                    saveImage.setClickable(false);
+                    GlideApp
+                            .with(Contract.context)
+                            .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(saveImage);
+                    ToastShort("正在保存图片");
+                    break;
+                }
+                case SucceedSavingImage: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_cloud_done_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(saveImage);
+                    ToastShort("保存图片成功");
+                    saveImage.setClickable(true);
+                    break;
+                }
+                case FailedSavingImage: {
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_outline_cloud_download_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(saveImage);
+                    ToastShort("保存图片失败");
+                    saveImage.setClickable(true);
+                    break;
+                }
+
+
+            }
+        }
+    };
 
     float getMinimunScale() {
         float pictureWidth = photoView.getDrawable().getBounds().width();

@@ -24,6 +24,8 @@ public class FullscreenActivity extends AppCompatActivity {
      */
     public static boolean AUTO_HIDE = false;
 
+    public static boolean PRE_HIDE = true;
+
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
@@ -51,10 +53,10 @@ public class FullscreenActivity extends AppCompatActivity {
             mContentView.setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LOW_PROFILE
 //                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
             );
         }
     };
@@ -107,7 +109,8 @@ public class FullscreenActivity extends AppCompatActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        if (PRE_HIDE)
+            delayedHide(100);
     }
 
     public void toggle() {
@@ -151,8 +154,8 @@ public class FullscreenActivity extends AppCompatActivity {
      * previously scheduled calls.
      */
     public void delayedHide(int delayMillis) {
-            mHideHandler.removeCallbacks(mHideRunnable);
-            mHideHandler.postDelayed(mHideRunnable, delayMillis);
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
 

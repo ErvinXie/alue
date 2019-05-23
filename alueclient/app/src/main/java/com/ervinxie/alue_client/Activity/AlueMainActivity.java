@@ -16,7 +16,7 @@ import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.adapter.ImageArrayAdapter;
 import com.ervinxie.alue_client.data.AppDatabase;
 import com.ervinxie.alue_client.data.DataManager;
-import com.ervinxie.alue_client.data.GlideApp;
+import com.ervinxie.alue_client.util.myglide.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.util.FullscreenActivity;

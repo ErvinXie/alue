@@ -11,9 +11,7 @@
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/contentPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,14 +23,28 @@
 
             <com.github.chrisbanes.photoview.PhotoView
                 android:id="@+id/photoView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                tools:srcCompat="@tools:sample/avatars">
 
+            </com.github.chrisbanes.photoview.PhotoView>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:backgroundTint="#FFEE58"
+                android:backgroundTintMode="src_over"
+                android:progressTint="@color/colorWhite"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/photoView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -79,17 +91,6 @@
                 app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
 
             <ImageButton
-                android:id="@+id/scale_wallpaper"
-                android:layout_width="0dp"
-                android:layout_height="35dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_weight="1"
-                android:background="@color/colorTransparent"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_outline_center_focus_strong_144px" />
-
-            <ImageButton
                 android:id="@+id/download_wallpaper"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
@@ -102,6 +103,7 @@
 
 
         </LinearLayout>
+
     </FrameLayout>
 
 </FrameLayout>

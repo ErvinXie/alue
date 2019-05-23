@@ -17,7 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.Activity.ImageInspectorActivity;
 import com.ervinxie.alue_client.R;
-import com.ervinxie.alue_client.data.GlideApp;
+import com.ervinxie.alue_client.util.myglide.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 
 import java.util.List;
