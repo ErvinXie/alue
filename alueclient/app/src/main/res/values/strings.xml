@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">alue-client</string>
+    <string name="app_name">alue</string>
     <string name="textview">TextView</string>
 </resources>

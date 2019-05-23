@@ -34,18 +34,23 @@ public class AboutActicity extends FullscreenActivity {
     ImageButton nav_bubble;
     Button offer_me_coffe, to_data_test;
 
+    TextView bigtitle,version;
     LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_view);
-
+        requestPermission();
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         linearLayout = findViewById(R.id.contentPanel);
         to_data_test = findViewById(R.id.to_data_test);
         nav_bubble = findViewById(R.id.nav_bubble);
         offer_me_coffe = findViewById(R.id.offer_me_coffee);
+        bigtitle = findViewById(R.id.bigtitle);
+        version = findViewById(R.id.version);
+        version.setText("version: "+Contract.getLocalVersion());
+
 
         mContentView = linearLayout;
 
@@ -65,7 +70,6 @@ public class AboutActicity extends FullscreenActivity {
 
         offer_me_coffe.setOnClickListener(v -> {
             payV2(v);
-
         });
 
     }
@@ -158,16 +162,37 @@ public class AboutActicity extends FullscreenActivity {
                             Manifest.permission.READ_PHONE_STATE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE
                     }, PERMISSIONS_REQUEST_CODE);
-
         }
     }
 
-
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case PERMISSIONS_REQUEST_CODE: {
+//
+//                // 用户取消了权限弹窗
+//                if (grantResults.length == 0) {
+//                    showToast(this, getString(R.string.permission_rejected));
+//                    return;
+//                }
+//
+//                // 用户拒绝了某些权限
+//                for (int x : grantResults) {
+//                    if (x == PackageManager.PERMISSION_DENIED) {
+//                        showToast(this, getString(R.string.permission_rejected));
+//                        return;
+//                    }
+//                }
+//
+//                // 所需的权限均正常获取
+//                showToast(this, getString(R.string.permission_granted));
+//            }
+//        }
+//    }
     /**
      * 支付宝支付业务示例
      */
     public void payV2(View v) {
-        requestPermission();
         if (TextUtils.isEmpty(APPID) || (TextUtils.isEmpty(RSA2_PRIVATE) && TextUtils.isEmpty(RSA_PRIVATE))) {
             ToastShort("缺少密钥");
             return;

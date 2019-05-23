@@ -26,6 +26,10 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
 
     static final String TAG = "ImageArrayAdapter";
 
+    public List<Pictures> getPicturesList() {
+        return picturesList;
+    }
+
     private List<Pictures> picturesList;
 
     public ImageArrayAdapter(List<Pictures> picturesList) {
@@ -97,5 +101,17 @@ public class ImageArrayAdapter extends RecyclerView.Adapter<ImageArrayAdapter.Pi
         }
     }
 
+    public void addData(int position,Pictures pictures) {
+        picturesList.add(position, pictures);
+        Contract.alueMainActivity.runOnUiThread(()->{
+            notifyItemInserted(position);
+        });
+    }
 
+    public void removeData(int position) {
+        picturesList.remove(position);
+        Contract.alueMainActivity.runOnUiThread(()->{
+            notifyItemRemoved(position);
+        });
+    }
 }

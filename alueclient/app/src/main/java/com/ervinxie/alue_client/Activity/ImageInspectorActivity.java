@@ -116,6 +116,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
 
 
         like.setOnClickListener(v -> {
+            like.setClickable(false);
             if (liked) {
                 GlideApp
                         .with(Contract.context)
@@ -137,12 +138,15 @@ public class ImageInspectorActivity extends FullscreenActivity {
                 liked = !liked;
                 pictures.setLiked(liked);
                 DataManager.database.picturesDao().update(pictures);
+                runOnUiThread(()->{
+                    like.setClickable(true);
+                });
             }).start();
-
 
         });
 
         setWallpaper.setOnClickListener(v -> {
+            setWallpaper.setClickable(false);
             if(AUTO_HIDE){delayedHide(3000);}
 
             float minimumscale = getMinimunScale();
@@ -226,7 +230,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                         runOnUiThread(() -> {
                             GlideApp
                                     .with(Contract.context)
-                                    .load(R.drawable.ic_baseline_cloud_done_144px)
+                                    .load(R.drawable.ic_baseline_done_144px)
                                     .error(R.drawable.ic_clear_white_144dp)
                                     .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(setWallpaper);
@@ -257,6 +261,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                                     .error(R.drawable.ic_clear_white_144dp)
                                     .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(setWallpaper);
+                            setWallpaper.setClickable(true);
                         });
                     }).start();
                 }).start();
@@ -264,6 +269,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
         });
 
         saveImage.setOnClickListener(v -> {
+            saveImage.setClickable(false);
             if(AUTO_HIDE){delayedHide(3000);}
             GlideApp
                     .with(Contract.context)
@@ -293,9 +299,11 @@ public class ImageInspectorActivity extends FullscreenActivity {
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             2);
                 } else {
-                    MediaStore.Images.Media.insertImage(Contract.context.getContentResolver(), bitmap, pictureTitle, pictureDescription);
-                    Log.d(TAG, "wallpaper saved");
-                    ok = true;
+                    if(bitmap!=null) {
+                        MediaStore.Images.Media.insertImage(Contract.context.getContentResolver(), bitmap, pictureTitle, pictureDescription);
+                        Log.d(TAG, "wallpaper saved");
+                        ok = true;
+                    }
                 }
                 if (ok) {
                     runOnUiThread(() -> {
@@ -306,6 +314,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(saveImage);
                         ToastShort("保存图片成功");
+                        saveImage.setClickable(true);
                     });
                 } else {
                     runOnUiThread(() -> {
@@ -316,8 +325,10 @@ public class ImageInspectorActivity extends FullscreenActivity {
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(saveImage);
                         ToastShort("保存图片失败");
+                        saveImage.setClickable(true);
                     });
                 }
+
             }).start();
 
         });

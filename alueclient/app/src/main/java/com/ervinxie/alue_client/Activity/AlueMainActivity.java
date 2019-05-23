@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -34,7 +35,7 @@ public class AlueMainActivity extends FullscreenActivity {
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
-    RecyclerView.Adapter adapter;
+    ImageArrayAdapter adapter;
 
     AppDatabase database;
 
@@ -44,7 +45,6 @@ public class AlueMainActivity extends FullscreenActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Contract.context = getApplicationContext();
         Contract.alueMainActivity = this;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alue_main_activity_fullscreen);
         mVisible = true;
@@ -59,20 +59,26 @@ public class AlueMainActivity extends FullscreenActivity {
         nav_like = findViewById(R.id.like);
 
         nav_info.setOnClickListener(v -> {
-            if(AUTO_HIDE){delayedHide(3000);}
+            if (AUTO_HIDE) {
+                delayedHide(3000);
+            }
             Intent intent = new Intent(Contract.context, AboutActicity.class);
             startActivity(intent);
         });
         nav_bubble.setOnClickListener(v -> {
-            if(AUTO_HIDE){delayedHide(3000);}
+            if (AUTO_HIDE) {
+                delayedHide(3000);
+            }
             swipeRefreshLayout.setRefreshing(true);
             updateDatabaseAndLoadContent();
         });
+
         nav_like.setOnClickListener(v -> {
-            if(AUTO_HIDE){delayedHide(3000);}
+            if (AUTO_HIDE) {
+                delayedHide(3000);
+            }
             if (liked) {
                 liked = false;
-                loadContent();
                 GlideApp
                         .with(Contract.context)
                         .load(R.drawable.ic_baseline_favorite_border_144px)
@@ -81,7 +87,6 @@ public class AlueMainActivity extends FullscreenActivity {
                         .into(nav_like);
             } else {
                 liked = true;
-                loadContent();
                 GlideApp
                         .with(Contract.context)
                         .load(R.drawable.ic_baseline_favorite_144px)
@@ -89,6 +94,7 @@ public class AlueMainActivity extends FullscreenActivity {
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(nav_like);
             }
+            refreshLike();
         });
 
         updateDatabaseAndLoadContent();
@@ -106,13 +112,15 @@ public class AlueMainActivity extends FullscreenActivity {
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setOnScrollListener(new OnVerticalScrollListener() {
             @Override
             public void onScrolledUp() {
                 super.onScrolledUp();
                 show();
-                if(AUTO_HIDE){delayedHide(3000);}
+                if (AUTO_HIDE) {
+                    delayedHide(3000);
+                }
             }
 
             @Override
@@ -151,7 +159,46 @@ public class AlueMainActivity extends FullscreenActivity {
 
     }
 
+
+    private void refreshLike() {
+        nav_like.setClickable(false);
+        new Thread(() -> {
+            try {
+                List<Pictures> adapterPicturesList = adapter.getPicturesList();
+                List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
+                if (liked == false) {
+                    for (int i = 0; i < picturesList.size(); i++) {
+                        if (picturesList.get(i).getLiked() == false) {
+
+                            if (i == adapterPicturesList.size() || adapterPicturesList.get(i).getId().equals(picturesList.get(i).getId())==false) {
+
+                                Log.d(TAG, "add " + i + " adapterPicturesList.size()" + adapterPicturesList.size());
+//                                Log.d(TAG,"adapterPicturesList.get(i).getId():"+adapterPicturesList.get(i).getId()+" picturesList.get(i).getId()"+picturesList.get(i).getId());
+                                adapter.addData(i, picturesList.get(i));
+                            }
+                        } else {
+                            adapterPicturesList.get(i).setLiked(true);
+                        }
+                    }
+                } else {
+                    for(int i=picturesList.size()-1;i>=0;i--) {
+                        if (picturesList.get(i).getLiked() == false) {
+                            adapter.removeData(i);
+                        }
+                    }
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+            this.runOnUiThread(() -> {
+                nav_like.setClickable(true);
+            });
+        }).start();
+    }
+
+
     private void loadContent() {
+        nav_bubble.setClickable(false);
         new Thread(() -> {
             List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
             if (liked) {
@@ -169,7 +216,15 @@ public class AlueMainActivity extends FullscreenActivity {
                 swipeRefreshLayout.setRefreshing(false);
 
             });
+            this.runOnUiThread(() -> {
+                nav_bubble.setClickable(true);
+            });
         }).start();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadContent();
+    }
 }
