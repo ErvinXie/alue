@@ -131,7 +131,6 @@ public class AlueMainActivity extends FullscreenActivity {
         });
 
         database = AppDatabase.getInstance(Contract.context);
-        loadContent();
     }
 
     @Override
@@ -198,7 +197,10 @@ public class AlueMainActivity extends FullscreenActivity {
 
 
     private void loadContent() {
-        nav_bubble.setClickable(false);
+        runOnUiThread(()->{
+            nav_bubble.setClickable(false);
+            swipeRefreshLayout.setRefreshing(true);
+        });
         new Thread(() -> {
             List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
             if (liked) {
