@@ -93,6 +93,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
             }
         }.load(urlRegular, new RequestOptions()
                 .error(R.drawable.ic_clear_white_144dp)
+                .placeholder(DrawableGen.getCircularProgressDrawable(100,Color.WHITE))
                 .priority(Priority.HIGH));
 
 
@@ -134,7 +135,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                     bitmap = GlideApp
                             .with(Contract.context)
                             .asBitmap()
-                            .load(urlFull)
+                            .load(urlRegular)
                             .submit().get();
 
                 } catch (ExecutionException e) {
