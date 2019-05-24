@@ -164,7 +164,7 @@ public class DataTest extends AppCompatActivity {
 
         update.setOnClickListener(v -> {
             new Thread(()->{
-                DataManager.updateDatabase();
+                new DataManager().updateDatabase();
             }).start();
 
         });

@@ -16,8 +16,6 @@ public class Contract {
 
     public static AlueMainActivity alueMainActivity;
 
-    public static Boolean isLoading;
-
     public static String getLocalVersion() {
         Context ctx = context;
         String localVersion = "";

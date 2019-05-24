@@ -28,7 +28,6 @@ import com.ervinxie.alue_client.util.FullscreenActivity;
 import com.ervinxie.alue_client.util.OnVerticalScrollListener;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AlueMainActivity extends FullscreenActivity {
 
@@ -98,11 +97,7 @@ public class AlueMainActivity extends FullscreenActivity {
             public void onScrolledUp() {
                 super.onScrolledUp();
                 show();
-                if (AUTO_HIDE) {
-                    delayedHide(3000);
-                }
             }
-
             @Override
             public void onScrolledDown() {
                 super.onScrolledDown();
@@ -132,27 +127,28 @@ public class AlueMainActivity extends FullscreenActivity {
 
     private void updateDatabaseAndLoadContent() {
         UIHandler.sendEmptyMessage(Refreshing);
-        AtomicReference<Boolean> timeout = new AtomicReference<>(false);
-        new Thread(()->{
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            timeout.set(true);
-        }).start();
         new Thread(() -> {
-            Contract.isLoading = true;
-            DataManager.updateDatabase();
-            while (timeout.get() ==false) {
-                while (Contract.isLoading) ;
-                UIHandler.sendEmptyMessage(loadContent);
-                break;
-            }
-            if(timeout.get()){
-                Contract.isLoading = false;
-                UIHandler.sendEmptyMessage(RefreshedFail);
-            }
+
+            new DataManager(){
+                @Override
+                public void OnSuccess() {
+                    super.OnSuccess();
+                    UIHandler.sendEmptyMessage(loadContent);
+                }
+
+                @Override
+                public void OnFailed() {
+                    super.OnFailed();
+                    UIHandler.sendEmptyMessage(RefreshedFail);
+                }
+
+                @Override
+                public void OnTimeOut() {
+                    super.OnTimeOut();
+                    UIHandler.sendEmptyMessage(RefreshTimeout);
+                }
+            }.updateDatabase();
+
         }).start();
 
 
@@ -192,6 +188,9 @@ public class AlueMainActivity extends FullscreenActivity {
     private static final int Refreshing = 1;
     private static final int RefreshedOk = 2;
     private static final int RefreshedFail = 3;
+    private static final int RefreshFinish = 9;
+    private static final int RefreshTimeout = 8;
+
     private static final int SetLikeClickable = 4;
     private static final int SetLike = 11;
     private static final int SetDislike = 12;
@@ -199,6 +198,8 @@ public class AlueMainActivity extends FullscreenActivity {
     private static final int loadContent = 5;
     private static final int ShowNoLike = 6;
     private static final int HideNoLike = 7;
+
+
 
     private Handler UIHandler = new Handler() {
         @Override
@@ -218,22 +219,39 @@ public class AlueMainActivity extends FullscreenActivity {
                 case RefreshedOk:{
                     GlideApp
                             .with(Contract.context)
-                            .load(R.drawable.ic_bubble_chart_white_144dp)
+                            .load(R.drawable.ic_bubble_chart_colorful_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
-                    nav_bubble.setClickable(true);
-                    swipeRefreshLayout.setRefreshing(false);
+                    this.sendEmptyMessageDelayed(RefreshFinish,2000);
                     break;
-
                 }
                 case RefreshedFail:{
                     ToastShort("加载失败");
                     GlideApp
                             .with(Contract.context)
+                            .load(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_bubble);
+                    this.sendEmptyMessageDelayed(RefreshFinish,2000);
+                    break;
+                }
+                case RefreshTimeout:{
+                    ToastShort("请求超时");
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_bubble);
+                    this.sendEmptyMessageDelayed(RefreshFinish,2000);
+                    break;
+                }
+                case RefreshFinish:{
+                    GlideApp
+                            .with(Contract.context)
                             .load(R.drawable.ic_bubble_chart_white_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
-                    nav_bubble.setClickable(false);
+                    nav_bubble.setClickable(true);
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 }
@@ -274,6 +292,10 @@ public class AlueMainActivity extends FullscreenActivity {
                 }
                 case HideNoLike:{
                     nolike.setVisibility(View.GONE);
+                    break;
+                }
+
+                default:{
                     break;
                 }
             }

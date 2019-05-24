@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    app:popupTheme="@style/TextAppearance.AppCompat.Widget.PopupMenu.Large"
+    >
+
+    <item
+        android:id="@+id/download_raw"
+        android:title="下载超超清" />
+    <item
+        android:id="@+id/download_full"
+        android:title="下载超清" />
+    <item
+        android:id="@+id/download_regular"
+        android:title="下载普通" />
+</menu>

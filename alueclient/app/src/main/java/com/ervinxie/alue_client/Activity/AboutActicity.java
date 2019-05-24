@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,9 +34,9 @@ import java.util.Map;
 public class AboutActicity extends FullscreenActivity {
 
     ImageButton nav_bubble;
-    TextView offer_me_coffe,clear_all_data;
+    TextView offer_me_coffe, clear_all_data, email_me;
 
-    TextView bigtitle,version;
+    TextView bigtitle, version;
     LinearLayout linearLayout;
 
     @Override
@@ -48,16 +49,24 @@ public class AboutActicity extends FullscreenActivity {
 
         nav_bubble = findViewById(R.id.nav_bubble);
         offer_me_coffe = findViewById(R.id.offer_me_coffee);
+        email_me = findViewById(R.id.email_me);
         clear_all_data = findViewById(R.id.clear_all_data);
         bigtitle = findViewById(R.id.bigtitle);
         version = findViewById(R.id.version);
-        version.setText("version: "+Contract.getLocalVersion());
-
-
         mContentView = linearLayout;
-
         mContentView.setOnClickListener(v -> {
             toggle();
+        });
+
+        //设置版本号
+        version.setText("version: " + Contract.getLocalVersion());
+
+        email_me.setOnClickListener(v->{
+            Intent data=new Intent(Intent.ACTION_SENDTO);
+            data.setData(Uri.parse("mailto:ervinxie@qq.com"));
+            data.putExtra(Intent.EXTRA_SUBJECT, "「alue」的开发者你好：");
+            data.putExtra(Intent.EXTRA_TEXT, "版本："+Contract.getLocalVersion());
+            startActivity(data);
         });
 
         nav_bubble.setOnClickListener(v -> finish());
@@ -69,12 +78,12 @@ public class AboutActicity extends FullscreenActivity {
 
 
         offer_me_coffe.setOnClickListener(v -> {
-            ToastShort("相关功能暂未开发");
-//            payV2(v);
+//            ToastShort("相关功能暂未开发");
+            payV2(v);
         });
-        clear_all_data.setOnClickListener(v->{
-            new Thread(()->{
-                DataManager.clear_all();
+        clear_all_data.setOnClickListener(v -> {
+            new Thread(() -> {
+                new DataManager().clear_all();
                 ToastShort("已清除");
             }).start();
 
@@ -109,7 +118,7 @@ public class AboutActicity extends FullscreenActivity {
      * 工具地址：https://doc.open.alipay.com/docs/doc.htm?treeId=291&articleId=106097&docType=1
      */
     public static final String RSA2_PRIVATE =
-    "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCngWFi9TsMQBqiym8KbdLfmaMQtgtg2aTh5UfNfQmsk4FTqxhmRHJolCnkEeHRix6EUSlw+4bw/xAUoNQCTtt9qWkN/DI6SvBcDNX36omuLhGX6RQjiMrMGV04qtOuDAIT06Me/6ON3rvifQIjJOwkPj2gHCToBYV5uzYgP5CLFpBE/GMIbMsPv34cvz7wPi+smYAQ5ABYG3a29WM3DsEixbNj+y8hosN52kwjRETMfGOhRppStTMpSA1S23spE2UEMKFeKzhFGSlRCKO3Ga0Kz1tDVvoWqHqepWaBU1lN5/JkKi5n6uNrCsHumSbcGi7NRdHzMZi5FhFIyWQyL4ljAgMBAAECggEBAJksBXrxVvqfz/uW861sug1AN837OjJpM45iFKPCuEr4Y6W36kryQlCBVEE7XO05s0E52pR3XXEZPIIwg05NAAdMGEXynZeSmXMDRdI7xYTimbH5MDJCT3gNpaJBC+q3DltFB4A8Mjp0OAknWQH8LHgD9mRn+BO3oNOtLxSUK8AS9jCPxBY/hjCg0Dz/8nTcBQLzo1ncawFGJFo9KKAAbL6WLAtvZbrBG32biXuFBU2bMmQ2liiK7pso1eXHsCIWSDw59l/T0TfSmMmKUmfQbIGtHCqlSlKAS3+TDCE10Qhf5/iNA26QxwBIeoJvCEtvZFmr+f1BqrUJ8nvAIS9c1TkCgYEA79KAFb57D2MsBvyLYAt5SIzoeKC9GV4i8spsxe3ofHZw9/gxPocUJg8IHJbP4wq+gLoaY9ZUew4mRNAAiBOZkRxtfMSiJJZNWCoTNUdl9k3r9X0fmwk1JwKUf9wxrf7JQn3Jct7Ne9T0xYv7CmgtWf0rPJcT//Do5gC/JNO8t7UCgYEAss4Jiyon4SuvdEgYbnRGje0U56ZrwAqAbz9Ig3ZmTW0GQO1FeAMsGFvPYhMHXkf9xAMvztuMDzXUDgSaH00rN9k/Aew9S92zUOodug3D1Xw6lp0pwNDotZCmT1kd0KbRjjCXLhRP8fobL3mzHuGmX9tvcVBlPgWdIx+rbawbu7cCgYEAyGHDIef5XN8JP4EuV37exO7vozLzLcoJO4JFpo/ljHFObPLU+qDVBgPTTEf6xYMJr/dP65F/Hx6wfRirCQgPbT8qgHCv5hAr6fml+QOCP23WNVVp3hmwbrrqJ3dtjytvMH53nuJpIQnLx2/xvz1Sf3lY8hRt4pGBmASRsYy1h20CgYBzVLKTMP3IH4VsW5RmqllX8jQptw6JMDznhMohAZ27EzeVaXYFkwY+L/n0KJH4Hjdw1x1fL/2HUhEVeaJvzjayL06Uzuw6oyWma1wBRh+q9BZWT8k+tYFkm4iqZbD1hKRmMrFQ54kpa0ldtgHzSVknO0MGs/SZrMVOgn7wnrLEwQKBgC2hsOMkN3cG41bNhCTv5fv/513PvRQB2xw+AWgjAhxTmO6iXcST6tdRHjuzzByjGg2BaoDXgJXFd6585EbusyL16/IffJEiJtizDBN/pxIu+Gw1a1TZ+2HAHS/cXj3EmluVbUquc6J1u74LtuewHfcbb6Xp3YMjQsLzsf0H+eTx";
+            "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCngWFi9TsMQBqiym8KbdLfmaMQtgtg2aTh5UfNfQmsk4FTqxhmRHJolCnkEeHRix6EUSlw+4bw/xAUoNQCTtt9qWkN/DI6SvBcDNX36omuLhGX6RQjiMrMGV04qtOuDAIT06Me/6ON3rvifQIjJOwkPj2gHCToBYV5uzYgP5CLFpBE/GMIbMsPv34cvz7wPi+smYAQ5ABYG3a29WM3DsEixbNj+y8hosN52kwjRETMfGOhRppStTMpSA1S23spE2UEMKFeKzhFGSlRCKO3Ga0Kz1tDVvoWqHqepWaBU1lN5/JkKi5n6uNrCsHumSbcGi7NRdHzMZi5FhFIyWQyL4ljAgMBAAECggEBAJksBXrxVvqfz/uW861sug1AN837OjJpM45iFKPCuEr4Y6W36kryQlCBVEE7XO05s0E52pR3XXEZPIIwg05NAAdMGEXynZeSmXMDRdI7xYTimbH5MDJCT3gNpaJBC+q3DltFB4A8Mjp0OAknWQH8LHgD9mRn+BO3oNOtLxSUK8AS9jCPxBY/hjCg0Dz/8nTcBQLzo1ncawFGJFo9KKAAbL6WLAtvZbrBG32biXuFBU2bMmQ2liiK7pso1eXHsCIWSDw59l/T0TfSmMmKUmfQbIGtHCqlSlKAS3+TDCE10Qhf5/iNA26QxwBIeoJvCEtvZFmr+f1BqrUJ8nvAIS9c1TkCgYEA79KAFb57D2MsBvyLYAt5SIzoeKC9GV4i8spsxe3ofHZw9/gxPocUJg8IHJbP4wq+gLoaY9ZUew4mRNAAiBOZkRxtfMSiJJZNWCoTNUdl9k3r9X0fmwk1JwKUf9wxrf7JQn3Jct7Ne9T0xYv7CmgtWf0rPJcT//Do5gC/JNO8t7UCgYEAss4Jiyon4SuvdEgYbnRGje0U56ZrwAqAbz9Ig3ZmTW0GQO1FeAMsGFvPYhMHXkf9xAMvztuMDzXUDgSaH00rN9k/Aew9S92zUOodug3D1Xw6lp0pwNDotZCmT1kd0KbRjjCXLhRP8fobL3mzHuGmX9tvcVBlPgWdIx+rbawbu7cCgYEAyGHDIef5XN8JP4EuV37exO7vozLzLcoJO4JFpo/ljHFObPLU+qDVBgPTTEf6xYMJr/dP65F/Hx6wfRirCQgPbT8qgHCv5hAr6fml+QOCP23WNVVp3hmwbrrqJ3dtjytvMH53nuJpIQnLx2/xvz1Sf3lY8hRt4pGBmASRsYy1h20CgYBzVLKTMP3IH4VsW5RmqllX8jQptw6JMDznhMohAZ27EzeVaXYFkwY+L/n0KJH4Hjdw1x1fL/2HUhEVeaJvzjayL06Uzuw6oyWma1wBRh+q9BZWT8k+tYFkm4iqZbD1hKRmMrFQ54kpa0ldtgHzSVknO0MGs/SZrMVOgn7wnrLEwQKBgC2hsOMkN3cG41bNhCTv5fv/513PvRQB2xw+AWgjAhxTmO6iXcST6tdRHjuzzByjGg2BaoDXgJXFd6585EbusyL16/IffJEiJtizDBN/pxIu+Gw1a1TZ+2HAHS/cXj3EmluVbUquc6J1u74LtuewHfcbb6Xp3YMjQsLzsf0H+eTx";
     public static final String RSA_PRIVATE = "";
 
     private static final int SDK_PAY_FLAG = 1;
@@ -143,7 +152,9 @@ public class AboutActicity extends FullscreenActivity {
                 default:
                     break;
             }
-        };
+        }
+
+        ;
     };
 
     /**
@@ -195,6 +206,7 @@ public class AboutActicity extends FullscreenActivity {
 //            }
 //        }
 //    }
+
     /**
      * 支付宝支付业务示例
      */

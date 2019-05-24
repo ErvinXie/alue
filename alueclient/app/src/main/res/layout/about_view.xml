@@ -72,6 +72,19 @@
             android:textSize="20dp" />
 
         <TextView
+            android:id="@+id/email_me"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorPrimaryDark"
+            android:fontFamily="sans-serif-thin"
+            android:text="联系作者 ervinxie@qq.com"
+            android:textAlignment="viewStart"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp" />
+
+        <TextView
             android:id="@+id/clear_all_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

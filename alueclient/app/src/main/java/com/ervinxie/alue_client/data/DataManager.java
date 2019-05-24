@@ -16,26 +16,27 @@ import org.json.JSONObject;
 public class DataManager {
     static final String TAG = "Data Manager: ";
 
-    private DataManager() {
-    }
+    public DataManager() { }
 
     public static AppDatabase database = AppDatabase.getInstance(Contract.context);
 
-    public static void updateDatabase() {
+    public void updateDatabase() {
         int database_photos = database.picturesDao().getPicturesAmount();
         Log.d(TAG, "database_photos = " + database_photos);
+
         JsonObjectRequest requestCollectionInfo = new JsonObjectRequest
                 (Request.Method.GET, UrlGenerator.CollectionInfo(), null,
                         (JSONObject collectionInfo) -> {
                             try {
                                 Log.d(TAG, " request Collection Info " + collectionInfo.toString());
                                 Log.d(TAG, "total_photos " + collectionInfo.getString("total_photos"));
-                                Integer total_photos = new Integer(collectionInfo.getString("total_photos"));
+                                Integer total_photos =
+                                        new Integer(collectionInfo.getString("total_photos"));
                                 Log.d(TAG, "total_photos = " + total_photos);
                                 if (total_photos.equals(database_photos) == false) {
                                     connectAndUpdate(total_photos - database_photos);
                                 } else {
-                                    Contract.isLoading = false;
+                                    OnSuccess();
                                     Log.d(TAG, "No need to Update!");
                                 }
                             } catch (JSONException e) {
@@ -44,18 +45,28 @@ public class DataManager {
                                 e.printStackTrace();
                             }
                         }, error -> {
-                    Contract.isLoading = false;
+                    if(error.getNetworkTimeMs()>10000){
+                        OnTimeOut();
+                    }
+                    else{
+                        OnFailed();
+                    }
                     Log.d(TAG, "error in request Collection Info: " + error.getMessage());
                 });
-        requestCollectionInfo.setShouldCache(false);
         Network.getInstance(Contract.context).addToRequestQueue(requestCollectionInfo);
-
-
+    }
+    public void OnSuccess(){
+        OnFinished();}
+    public void OnFailed(){
+        OnFinished();}
+    public void OnFinished(){}
+    public void OnTimeOut(){
+        OnFinished();
     }
 
     private static int pictureId;
 
-    static void connectAndUpdate(int absent_photos) throws InterruptedException {
+    void connectAndUpdate(int absent_photos) throws InterruptedException {
         Log.d(TAG, "connectAndUpdate at " + absent_photos + " absent");
         new Thread(() -> {
             pictureId = database.picturesDao().getMaxId();
@@ -87,7 +98,8 @@ public class DataManager {
 
 
                                             Thread save = new Thread(() -> {
-                                                Pictures temp = database.picturesDao().getPicturesById(pictures.getId());
+                                                Pictures temp =
+                                                        database.picturesDao().getPicturesById(pictures.getId());
                                                 if (temp != null) {
                                                     Log.d(TAG, pictures.getId() + " " + pictures.getTitle() + " already exists");
                                                 } else {
@@ -107,13 +119,20 @@ public class DataManager {
                                     }
                                     Log.d(TAG, " collection Photos Request(" + finalPage + ") " + photosResponse.toString());
                                     if (finalPage == 0)
-                                        Contract.isLoading = false;
+                                        OnSuccess();
 
                                 },
                                 error -> {
                                     Log.d(TAG, "error in collection Photos Request: " + error.getMessage());
-                                    if (finalPage == 0)
-                                        Contract.isLoading = false;
+                                    if (finalPage == 0){
+                                        if(error.getNetworkTimeMs()>10000){
+                                            OnTimeOut();
+                                        }
+                                        else{
+                                            OnFailed();
+                                        }
+                                    }
+
                                 });
 
                 collectionPhotosRequest.setShouldCache(false);
@@ -123,7 +142,7 @@ public class DataManager {
         }).start();
     }
 
-    static public void clear_all(){
+    public void clear_all() {
         database.picturesDao().delete();
     }
 }

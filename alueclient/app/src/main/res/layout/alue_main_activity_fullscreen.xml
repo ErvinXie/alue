@@ -134,7 +134,7 @@
                 android:layout_weight="1"
                 android:background="@color/colorTransparent"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_outline_dashboard_144px" />
+                app:srcCompat="@drawable/ic_outline_reorder_24px" />
 
         </LinearLayout>
     </FrameLayout>
