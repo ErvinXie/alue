@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 
 import com.alipay.sdk.app.PayTask;
 import com.ervinxie.alue_client.R;
+import com.ervinxie.alue_client.data.DataManager;
 import com.ervinxie.alue_client.data.DataTest;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.util.FullscreenActivity;
@@ -32,7 +33,7 @@ import java.util.Map;
 public class AboutActicity extends FullscreenActivity {
 
     ImageButton nav_bubble;
-    Button offer_me_coffe, to_data_test;
+    TextView offer_me_coffe,clear_all_data;
 
     TextView bigtitle,version;
     LinearLayout linearLayout;
@@ -44,9 +45,10 @@ public class AboutActicity extends FullscreenActivity {
         requestPermission();
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         linearLayout = findViewById(R.id.contentPanel);
-        to_data_test = findViewById(R.id.to_data_test);
+
         nav_bubble = findViewById(R.id.nav_bubble);
         offer_me_coffe = findViewById(R.id.offer_me_coffee);
+        clear_all_data = findViewById(R.id.clear_all_data);
         bigtitle = findViewById(R.id.bigtitle);
         version = findViewById(R.id.version);
         version.setText("version: "+Contract.getLocalVersion());
@@ -56,20 +58,26 @@ public class AboutActicity extends FullscreenActivity {
 
         mContentView.setOnClickListener(v -> {
             toggle();
-
-            if(AUTO_HIDE){delayedHide(3000);}
-        });
-
-
-        to_data_test.setOnClickListener(v -> {
-            Intent intent = new Intent(this, DataTest.class);
-            startActivity(intent);
         });
 
         nav_bubble.setOnClickListener(v -> finish());
+        nav_bubble.setOnLongClickListener(v -> {
+            Intent intent = new Intent(Contract.context, DataTest.class);
+            startActivity(intent);
+            return false;
+        });
+
 
         offer_me_coffe.setOnClickListener(v -> {
-            payV2(v);
+            ToastShort("相关功能暂未开发");
+//            payV2(v);
+        });
+        clear_all_data.setOnClickListener(v->{
+            new Thread(()->{
+                DataManager.clear_all();
+                ToastShort("已清除");
+            }).start();
+
         });
 
     }

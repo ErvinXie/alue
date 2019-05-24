@@ -121,7 +121,9 @@ public class DataManager {
             }
 
         }).start();
+    }
 
-
+    static public void clear_all(){
+        database.picturesDao().delete();
     }
 }

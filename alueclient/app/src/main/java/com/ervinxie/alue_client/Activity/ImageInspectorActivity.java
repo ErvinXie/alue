@@ -2,7 +2,9 @@ package com.ervinxie.alue_client.Activity;
 
 import android.Manifest;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -15,6 +17,7 @@ import android.os.Message;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -89,7 +92,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
 
         new GlideImageLoader(photoView, progressBar) {
             public void onSuccess() {
-                UIHandler.sendEmptyMessageAtTime(Scale, 500);
+                UIHandler.sendEmptyMessageDelayed(Scale, 100);
             }
         }.load(urlRegular, new RequestOptions()
                 .error(R.drawable.ic_clear_white_144dp)
@@ -264,7 +267,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                     ToastShort("正在设置壁纸");
                     GlideApp
                             .with(Contract.context)
-                            .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
+                            .load(DrawableGen.getCircularProgressDrawable(30, Color.WHITE))
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(setWallpaper_button);
                     break;
@@ -277,7 +280,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(setWallpaper_button);
                     ToastShort("壁纸设置成功");
-                    UIHandler.sendEmptyMessageAtTime(WallPaperSet, 2000);
+                    UIHandler.sendEmptyMessageDelayed(WallPaperSet, 2000);
                     break;
                 }
                 case FailedSettingWallPaper: {
@@ -288,7 +291,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(setWallpaper_button);
                     ToastShort("壁纸设置失败");
-                    UIHandler.sendEmptyMessageAtTime(WallPaperSet, 2000);
+                    UIHandler.sendEmptyMessageDelayed(WallPaperSet, 2000);
                     break;
                 }
                 case WallPaperSet: {
@@ -321,7 +324,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
                     saveImage.setClickable(false);
                     GlideApp
                             .with(Contract.context)
-                            .load(DrawableGen.getCircularProgressDrawable(20, Color.WHITE))
+                            .load(DrawableGen.getCircularProgressDrawable(30, Color.WHITE))
                             .error(R.drawable.ic_clear_white_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(saveImage);
@@ -360,8 +363,22 @@ public class ImageInspectorActivity extends FullscreenActivity {
         float pictureWidth = photoView.getDrawable().getBounds().width();
         float pictureHeight = photoView.getDrawable().getBounds().height();
 
-        float viewWidth = photoView.getWidth();
-        float viewHeight = photoView.getHeight();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //4.2开始有虚拟导航栏，增加了该方法才能准确获取屏幕高度
+            this.getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+        }else{
+            this.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            //displayMetrics = activity.getResources().getDisplayMetrics();//或者该方法也行
+        }
+
+        float density = displayMetrics.density;
+        float viewWidth = displayMetrics.widthPixels;
+        float viewHeight = displayMetrics.heightPixels;
+
+
+//        float viewWidth = photoView.getWidth();
+//        float viewHeight = photoView.getHeight();
 
         Log.d(TAG, "pictureWidth: " + pictureWidth + " pictureHeight: " + pictureHeight);
         Log.d(TAG, "viewWidth: " + viewWidth + " viewHeight: " + viewHeight);

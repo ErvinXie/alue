@@ -1,8 +1,12 @@
 package com.ervinxie.alue_client.Activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -16,6 +20,7 @@ import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.adapter.ImageArrayAdapter;
 import com.ervinxie.alue_client.data.AppDatabase;
 import com.ervinxie.alue_client.data.DataManager;
+import com.ervinxie.alue_client.util.DrawableGen;
 import com.ervinxie.alue_client.util.myglide.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
@@ -23,13 +28,14 @@ import com.ervinxie.alue_client.util.FullscreenActivity;
 import com.ervinxie.alue_client.util.OnVerticalScrollListener;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AlueMainActivity extends FullscreenActivity {
 
     static final String TAG = "AlueMainActivity: ";
 
-    ImageButton nav_bubble, nav_info, nav_like;
-    LinearLayout linearLayout;
+    ImageButton nav_bubble, nav_info, nav_like, center_like;
+    LinearLayout linearLayout,nolike;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -50,6 +56,8 @@ public class AlueMainActivity extends FullscreenActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         linearLayout = findViewById(R.id.contentPanel);
+        nolike = findViewById(R.id.no_like);
+        nolike.setVisibility(View.INVISIBLE);
         recyclerView = findViewById(R.id.recycler);
         mContentView = linearLayout;
         swipeRefreshLayout = findViewById(R.id.swipeContainer);
@@ -57,45 +65,19 @@ public class AlueMainActivity extends FullscreenActivity {
         nav_bubble = findViewById(R.id.nav_bubble);
         nav_info = findViewById(R.id.nav_info);
         nav_like = findViewById(R.id.like);
+        center_like = findViewById(R.id.center_like);
 
         nav_info.setOnClickListener(v -> {
-            if (AUTO_HIDE) {
-                delayedHide(3000);
-            }
             Intent intent = new Intent(Contract.context, AboutActicity.class);
             startActivity(intent);
         });
         nav_bubble.setOnClickListener(v -> {
-            if (AUTO_HIDE) {
-                delayedHide(3000);
-            }
-            swipeRefreshLayout.setRefreshing(true);
             updateDatabaseAndLoadContent();
         });
 
-        nav_like.setOnClickListener(v -> {
-            if (AUTO_HIDE) {
-                delayedHide(3000);
-            }
-            if (liked) {
-                liked = false;
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_baseline_favorite_border_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(nav_like);
-            } else {
-                liked = true;
-                GlideApp
-                        .with(Contract.context)
-                        .load(R.drawable.ic_baseline_favorite_144px)
-                        .error(R.drawable.ic_clear_white_144dp)
-                        .transition(DrawableTransitionOptions.withCrossFade())
-                        .into(nav_like);
-            }
-            refreshLike();
-        });
+
+        center_like.setOnClickListener(likeListener);
+        nav_like.setOnClickListener(likeListener);
 
         updateDatabaseAndLoadContent();
 
@@ -104,10 +86,8 @@ public class AlueMainActivity extends FullscreenActivity {
             updateDatabaseAndLoadContent();
         });
 
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        swipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.colorWhite);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimaryDark);
 
 
         layoutManager = new LinearLayoutManager(this);
@@ -133,6 +113,10 @@ public class AlueMainActivity extends FullscreenActivity {
         database = AppDatabase.getInstance(Contract.context);
     }
 
+
+
+
+
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -145,58 +129,36 @@ public class AlueMainActivity extends FullscreenActivity {
         Log.d(TAG, "onSaveInstanceState: ");
     }
 
+
     private void updateDatabaseAndLoadContent() {
-        new Thread(() -> {
-            Log.d(TAG, "Database updating");
-            Contract.isLoading = true;
-            DataManager.updateDatabase();
-            while (Contract.isLoading) ;
-
-            Log.d(TAG, "Database reading");
-            loadContent();
-        }).start();
-
-    }
-
-
-    private void refreshLike() {
-        nav_like.setClickable(false);
-        new Thread(() -> {
+        UIHandler.sendEmptyMessage(Refreshing);
+        AtomicReference<Boolean> timeout = new AtomicReference<>(false);
+        new Thread(()->{
             try {
-                List<Pictures> adapterPicturesList = adapter.getPicturesList();
-                List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
-                if (liked == false) {
-                    for (int i = 0; i < picturesList.size(); i++) {
-                        if (picturesList.get(i).getLiked() == false) {
-
-                            if (i == adapterPicturesList.size() || adapterPicturesList.get(i).getId().equals(picturesList.get(i).getId())==false) {
-
-                                Log.d(TAG, "add " + i + " adapterPicturesList.size()" + adapterPicturesList.size());
-//                                Log.d(TAG,"adapterPicturesList.get(i).getId():"+adapterPicturesList.get(i).getId()+" picturesList.get(i).getId()"+picturesList.get(i).getId());
-                                adapter.addData(i, picturesList.get(i));
-                            }
-                        } else {
-                            adapterPicturesList.get(i).setLiked(true);
-                        }
-                    }
-                } else {
-                    for(int i=picturesList.size()-1;i>=0;i--) {
-                        if (picturesList.get(i).getLiked() == false) {
-                            adapter.removeData(i);
-                        }
-                    }
-                }
-            } catch (NullPointerException e) {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            this.runOnUiThread(() -> {
-                nav_like.setClickable(true);
-            });
+            timeout.set(true);
         }).start();
+        new Thread(() -> {
+            Contract.isLoading = true;
+            DataManager.updateDatabase();
+            while (timeout.get() ==false) {
+                while (Contract.isLoading) ;
+                UIHandler.sendEmptyMessage(loadContent);
+                break;
+            }
+            if(timeout.get()){
+                Contract.isLoading = false;
+                UIHandler.sendEmptyMessage(RefreshedFail);
+            }
+        }).start();
+
+
     }
 
-
-    private void loadContent() {
+    private void loadContentFromDataBase() {
         runOnUiThread(()->{
             nav_bubble.setClickable(false);
             swipeRefreshLayout.setRefreshing(true);
@@ -212,21 +174,147 @@ public class AlueMainActivity extends FullscreenActivity {
                 }
             }
             adapter = new ImageArrayAdapter(picturesList);
-
             this.runOnUiThread(() -> {
                 recyclerView.setAdapter(adapter);
-                swipeRefreshLayout.setRefreshing(false);
+            });
+            UIHandler.sendEmptyMessage(RefreshedOk);
 
-            });
-            this.runOnUiThread(() -> {
-                nav_bubble.setClickable(true);
-            });
         }).start();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadContent();
+        UIHandler.sendEmptyMessage(loadContent);
+    }
+
+
+    private static final int Refreshing = 1;
+    private static final int RefreshedOk = 2;
+    private static final int RefreshedFail = 3;
+    private static final int SetLikeClickable = 4;
+    private static final int SetLike = 11;
+    private static final int SetDislike = 12;
+
+    private static final int loadContent = 5;
+    private static final int ShowNoLike = 6;
+    private static final int HideNoLike = 7;
+
+    private Handler UIHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case Refreshing:{
+                    swipeRefreshLayout.setRefreshing(true);
+                    nav_bubble.setClickable(false);
+                    GlideApp
+                            .with(Contract.context)
+                            .load(DrawableGen.getCircularProgressDrawable(30, Color.WHITE))
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_bubble);
+                    break;
+                }
+                case RefreshedOk:{
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_bubble_chart_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_bubble);
+                    nav_bubble.setClickable(true);
+                    swipeRefreshLayout.setRefreshing(false);
+                    break;
+
+                }
+                case RefreshedFail:{
+                    ToastShort("加载失败");
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_bubble_chart_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_bubble);
+                    nav_bubble.setClickable(false);
+                    swipeRefreshLayout.setRefreshing(false);
+                    break;
+                }
+                case SetLikeClickable:{
+                    nav_like.setClickable(true);
+                    center_like.setClickable(true);
+                    break;
+                }
+                case SetDislike:{
+                    nav_like.setClickable(false);
+                    center_like.setClickable(false);
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_favorite_border_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_like);
+                    break;
+                }
+                case SetLike:{
+                    nav_like.setClickable(false);
+                    center_like.setClickable(false);
+                    GlideApp
+                            .with(Contract.context)
+                            .load(R.drawable.ic_baseline_favorite_144px)
+                            .error(R.drawable.ic_clear_white_144dp)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .into(nav_like);
+                    break;
+                }
+                case loadContent:{
+                    loadContentFromDataBase();
+                    break;
+                }
+                case ShowNoLike:{
+                    nolike.setVisibility(View.VISIBLE);
+                    break;
+                }
+                case HideNoLike:{
+                    nolike.setVisibility(View.GONE);
+                    break;
+                }
+            }
+
+
+
+
+        }
+    };
+    View.OnClickListener likeListener = v -> {
+        liked = !liked;
+        UIHandler.sendEmptyMessage(liked?SetLike:SetDislike);
+        refreshLike();
+    };
+    private void refreshLike() {
+        new Thread(() -> {
+            try {
+                List<Pictures> adapterPicturesList = adapter.getPicturesList();
+                List<Pictures> picturesList = database.picturesDao().getAllPicturesDesc();
+                if (liked == false) {
+                    UIHandler.sendEmptyMessage(HideNoLike);
+                    for (int i = 0; i < picturesList.size(); i++) {
+                        if (picturesList.get(i).getLiked() == false) {
+                            adapter.addData(i,picturesList.get(i));
+                        }
+                    }
+                } else {
+                    for(int i=picturesList.size()-1;i>=0;i--) {
+                        if (picturesList.get(i).getLiked() == false) {
+                            adapter.removeData(i);
+                        }
+                    }
+                    if(adapterPicturesList.size()==0){
+                        UIHandler.sendEmptyMessage(ShowNoLike);
+                    }
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            UIHandler.sendEmptyMessageDelayed(SetLikeClickable,500);
+        }).start();
     }
 }

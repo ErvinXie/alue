@@ -58,25 +58,28 @@
             android:textColor="@color/colorWhite"
             android:textSize="30dp" />
 
-        <Button
+        <TextView
             android:id="@+id/offer_me_coffee"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
             android:background="@color/colorPrimaryDark"
             android:fontFamily="sans-serif-thin"
             android:text="请我吃一顿黄焖鸡 ¥15"
             android:textAlignment="viewStart"
             android:textColor="@color/colorWhite"
             android:textSize="20dp" />
-        <Button
-            android:id="@+id/to_data_test"
+
+        <TextView
+            android:id="@+id/clear_all_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
             android:background="@color/colorPrimaryDark"
             android:fontFamily="sans-serif-thin"
-            android:text="DATA TEST"
+            android:text="清除所有数据"
             android:textAlignment="viewStart"
             android:textColor="@color/colorWhite"
             android:textSize="20dp" />

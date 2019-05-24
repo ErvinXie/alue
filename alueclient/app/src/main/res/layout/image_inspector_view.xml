@@ -37,9 +37,9 @@
                 android:id="@+id/progressBar"
                 style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
-                android:maxHeight="5dp"
                 android:layout_height="5dp"
                 android:layout_gravity="bottom|center|center_horizontal"
+                android:maxHeight="5dp"
 
 
                 android:progressDrawable="@drawable/custom_progressbar"
@@ -48,7 +48,7 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/photoView"
-                app:layout_constraintVertical_bias="0.499" />
+                app:layout_constraintVertical_bias="0.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
