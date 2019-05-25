@@ -24,7 +24,6 @@ import com.ervinxie.alue_client.util.DrawableGen;
 import com.ervinxie.alue_client.util.myglide.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
-import com.ervinxie.alue_client.util.FullscreenActivity;
 import com.ervinxie.alue_client.util.OnVerticalScrollListener;
 
 import java.util.List;
@@ -222,6 +221,7 @@ public class AlueMainActivity extends FullscreenActivity {
                             .load(R.drawable.ic_bubble_chart_colorful_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
+                    swipeRefreshLayout.setRefreshing(false);
                     this.sendEmptyMessageDelayed(RefreshFinish,2000);
                     break;
                 }
@@ -232,6 +232,7 @@ public class AlueMainActivity extends FullscreenActivity {
                             .load(R.drawable.ic_clear_white_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
+                    swipeRefreshLayout.setRefreshing(false);
                     this.sendEmptyMessageDelayed(RefreshFinish,2000);
                     break;
                 }
@@ -242,6 +243,7 @@ public class AlueMainActivity extends FullscreenActivity {
                             .load(R.drawable.ic_clear_white_144dp)
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
+                    swipeRefreshLayout.setRefreshing(false);
                     this.sendEmptyMessageDelayed(RefreshFinish,2000);
                     break;
                 }
@@ -252,7 +254,7 @@ public class AlueMainActivity extends FullscreenActivity {
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .into(nav_bubble);
                     nav_bubble.setClickable(true);
-                    swipeRefreshLayout.setRefreshing(false);
+
                     break;
                 }
                 case SetLikeClickable:{

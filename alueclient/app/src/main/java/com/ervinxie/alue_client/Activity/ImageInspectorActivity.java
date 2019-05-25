@@ -35,7 +35,6 @@ import com.ervinxie.alue_client.util.myglide.GlideApp;
 import com.ervinxie.alue_client.data.Pictures;
 import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.util.DrawableGen;
-import com.ervinxie.alue_client.util.FullscreenActivity;
 import com.ervinxie.alue_client.util.myglide.GlideImageLoader;
 import com.github.chrisbanes.photoview.PhotoView;
 
@@ -100,9 +99,10 @@ public class ImageInspectorActivity extends FullscreenActivity {
         pictureDescription = getIntent().getStringExtra("description");
 
 
+
         new GlideImageLoader(photoView, progressBar) {
             public void onSuccess() {
-                UIHandler.sendEmptyMessageDelayed(Scale, 100);
+                UIHandler.sendEmptyMessageDelayed(Scale, 5);
             }
         }.load(urlRegular, new RequestOptions()
                 .error(R.drawable.ic_clear_white_144dp)
@@ -414,6 +414,7 @@ public class ImageInspectorActivity extends FullscreenActivity {
     }
 
     float getMinimunScale() {
+        while (photoView.getDrawable().getBounds().width()==0);
         float pictureWidth  = photoView.getDrawable().getBounds().width();
         float pictureHeight = photoView.getDrawable().getBounds().height();
 

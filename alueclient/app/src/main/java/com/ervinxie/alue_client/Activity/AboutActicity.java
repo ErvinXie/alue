@@ -11,11 +11,9 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -25,7 +23,6 @@ import com.ervinxie.alue_client.R;
 import com.ervinxie.alue_client.data.DataManager;
 import com.ervinxie.alue_client.data.DataTest;
 import com.ervinxie.alue_client.util.Contract;
-import com.ervinxie.alue_client.util.FullscreenActivity;
 import com.ervinxie.alue_client.util.pay.OrderInfoUtil2_0;
 import com.ervinxie.alue_client.util.pay.PayResult;
 

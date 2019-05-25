@@ -16,7 +16,8 @@ import org.json.JSONObject;
 public class DataManager {
     static final String TAG = "Data Manager: ";
 
-    public DataManager() { }
+    public DataManager() {
+    }
 
     public static AppDatabase database = AppDatabase.getInstance(Contract.context);
 
@@ -45,24 +46,31 @@ public class DataManager {
                                 e.printStackTrace();
                             }
                         }, error -> {
-                    if(error.getNetworkTimeMs()>10000){
+                    if (error.getNetworkTimeMs() > 10000) {
                         OnTimeOut();
-                    }
-                    else{
+                    } else {
                         OnFailed();
                     }
                     Log.d(TAG, "error in request Collection Info: " + error.getMessage());
                 });
         Network.getInstance(Contract.context).addToRequestQueue(requestCollectionInfo);
     }
-    public void OnSuccess(){
-        OnFinished();}
-    public void OnFailed(){
-        OnFinished();}
-    public void OnFinished(){}
-    public void OnTimeOut(){
+
+    public void OnSuccess() {
         OnFinished();
     }
+
+    public void OnFailed() {
+        OnFinished();
+    }
+
+    public void OnTimeOut() {
+        OnFinished();
+    }
+
+    public void OnFinished() {
+    }
+
 
     private static int pictureId;
 
@@ -124,11 +132,10 @@ public class DataManager {
                                 },
                                 error -> {
                                     Log.d(TAG, "error in collection Photos Request: " + error.getMessage());
-                                    if (finalPage == 0){
-                                        if(error.getNetworkTimeMs()>10000){
+                                    if (finalPage == 0) {
+                                        if (error.getNetworkTimeMs() > 10000) {
                                             OnTimeOut();
-                                        }
-                                        else{
+                                        } else {
                                             OnFailed();
                                         }
                                     }
