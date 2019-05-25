@@ -16,12 +16,16 @@ public class Pictures {
     public String urlSmall;
     public String urlThumb;
 
+    public String title;
+    public String description;
+
     public String FilePath;
     public Boolean Liked;
 
     public String update_at;
 
-    public Pictures(){}
+    public Pictures() {
+    }
 
 
     public Pictures(String id, String urlRaw, String urlFull, String urlRegular, String urlSmall, String urlThumb, String filePath, Boolean liked, String date) {
@@ -38,7 +42,7 @@ public class Pictures {
 
     @Ignore
     public String info() {
-        return "Id:" + Id +" regularUrl: "+urlRegular+ " FilePath:" + FilePath + " Liked:" + Liked + "\n";
+        return "Pid:"+PictureId+" Id:" + Id + " regularUrl: " + urlRegular + " FilePath:" + FilePath + " Liked:" + Liked + "\n";
     }
 
     public void setId(String id) {
@@ -75,5 +79,65 @@ public class Pictures {
 
     public void setUpdate_at(String update_at) {
         this.update_at = update_at;
+    }
+
+    public int getPictureId() {
+        return PictureId;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public String getUrlRaw() {
+        return urlRaw;
+    }
+
+    public String getUrlFull() {
+        return urlFull;
+    }
+
+    public String getUrlRegular() {
+        return urlRegular;
+    }
+
+    public String getUrlSmall() {
+        return urlSmall;
+    }
+
+    public String getUrlThumb() {
+        return urlThumb;
+    }
+
+    public String getFilePath() {
+        return FilePath;
+    }
+
+    public Boolean getLiked() {
+        return Liked;
+    }
+
+    public String getUpdate_at() {
+        return update_at;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPictureId(int pictureId) {
+        PictureId = pictureId;
     }
 }

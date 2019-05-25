@@ -90,4 +90,10 @@
         android:layout_height="wrap_content"
         android:text="update" />
 
+    <Button
+        android:id="@+id/data_test_finish"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="finish" />
+
 </LinearLayout>

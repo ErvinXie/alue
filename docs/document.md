@@ -19,7 +19,9 @@ https://api.unsplash.com/collections/4795842/?client_id=747fc987bb098bd800270b4f
 ### Get photos of collection
 
 ```url
-https://api.unsplash.com/collections/4795842/photos/?client_id=747fc987bb098bd800270b4f2e684a2fc3414849d9eb3190766266167221d986&per_page=1&page=1
+https://api.unsplash.com/collections/4795842/photos/?client_id=747fc987bb098bd800270b4f2e684a2fc3414849d9eb3190766266167221d986&per_page=30&page=2
+
+https://api.unsplash.com/collections/4795842/photos/?client_id=747fc987bb098bd800270b4f2e684a2fc3414849d9eb3190766266167221d986&page=0&per_page=30
 
 ```
 

@@ -18,8 +18,12 @@ public interface PicturesDao {
     @Query("SELECT * FROM PICTURES WHERE Id = :id")
     Pictures getPicturesById(String id);
 
-    @Query("SELECT * FROM PICTURES ORDER BY update_at DESC")
+    @Query("SELECT * FROM PICTURES ORDER BY PictureId ")
     List<Pictures> getAllPictures();
+
+    @Query("SELECT * FROM PICTURES ORDER BY PictureId DESC")
+    List<Pictures> getAllPicturesDesc();
+
 
     @Query("SELECT COUNT(*) FROM PICTURES")
     int getPicturesAmount();
@@ -27,6 +31,8 @@ public interface PicturesDao {
     @Query("DELETE FROM PICTURES")
     void delete();
 
+    @Query("SELECT MAX(PictureId) FROM Pictures")
+    int getMaxId();
 
     @Insert
     void insert(Pictures pictures);

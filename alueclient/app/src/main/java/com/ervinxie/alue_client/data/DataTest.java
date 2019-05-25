@@ -3,30 +3,19 @@ package com.ervinxie.alue_client.data;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.ervinxie.alue_client.util.myglide.GlideApp;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.ervinxie.alue_client.Contract;
+import com.ervinxie.alue_client.util.Contract;
 import com.ervinxie.alue_client.R;
 
-import com.ervinxie.alue_client.network.Network;
 import com.ervinxie.alue_client.util.AboutPictures;
-import com.ervinxie.alue_client.util.UrlGenerator;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -36,7 +25,7 @@ public class DataTest extends AppCompatActivity {
     ImageView imageView1, imageView2, imageView3;
     TextView info;
     EditText url;
-    Button get, save, load, clear, insert, query, update;
+    Button get, save, load, clear, insert, query, update,finish;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +44,7 @@ public class DataTest extends AppCompatActivity {
         query = findViewById(R.id.data_test_query);
 
         update = findViewById(R.id.data_test_update);
+        finish = findViewById(R.id.data_test_finish);
 
         get.setOnClickListener(v -> {
             String Url = url.getText().toString();
@@ -177,6 +167,10 @@ public class DataTest extends AppCompatActivity {
                 DataManager.updateDatabase();
             }).start();
 
+        });
+
+        finish.setOnClickListener(v->{
+            finish();
         });
 
     }

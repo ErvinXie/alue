@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".util.FullscreenActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+
+    <LinearLayout
+        android:id="@+id/contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00222222"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="40dp"
+                    android:background="#001D1D1D"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+            <LinearLayout
+                android:id="@+id/no_like"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginTop="300dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-thin"
+                    android:text="还没有喜欢的图片"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="18sp" />
+
+                <ImageButton
+                    android:id="@+id/center_like"
+                    android:layout_width="35dp"
+                    android:layout_height="79dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorTransparent"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:id="@+id/fullscreen_content_controls"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+
+            android:background="@color/color30Transparent"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <ImageButton
+                android:id="@+id/nav_bubble"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_bubble_chart_white_144dp" />
+
+            <ImageButton
+                android:id="@+id/like"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_baseline_favorite_border_144px" />
+
+            <ImageButton
+                android:id="@+id/nav_info"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:background="@color/colorTransparent"
+                android:scaleType="centerInside"
+                app:srcCompat="@drawable/ic_outline_dashboard_144px" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>
